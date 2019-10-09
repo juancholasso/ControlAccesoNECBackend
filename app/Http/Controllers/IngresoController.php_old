@@ -1,0 +1,285 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Ingreso;
+use App\Models\Permiso;
+use App\Models\Usuario;
+use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+// Socket Client
+use ElephantIO\Client;
+use ElephantIO\Engine\SocketIO\Version2X;
+
+class IngresoController extends Controller
+{
+
+    public function __construct() { }
+
+    /**
+     *  Listar todos los ingresos del sistema
+     */
+    public function listar()
+    {   
+        $result = Ingreso::with('usuario')->get();
+        if (count($result) > 0) {
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.3.message')),
+                config('constants.messages.3.code')
+            );
+        }else{
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.4.message')),
+                config('constants.messages.4.code')
+            );
+        }
+    }
+
+    /**
+     * Consultar la información de un ingreso por ID
+     */
+    public function consultar($id)
+    {   
+        $result = Ingreso::with('usuario')->where('id', $id)->first();
+        if (count($result) > 0) {
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.3.message')),
+                config('constants.messages.3.code')
+            );
+        }else{
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.4.message')),
+                config('constants.messages.4.code')
+            );
+        }
+    }
+
+    /**
+     *  Cuando un usuario registre su entrada la información será almacenada a través de este método
+     *  Antes de registrar la información verifica si el usuario ya se encuentra dentro del sitio
+     *  y si el usuario se encuentra en en el rango permitido de ingresos
+     */
+    public function insertar(Request $request)
+    {
+        $request = $request -> json() -> all();
+        $guid = $request["usuario"];
+        
+        date_default_timezone_set('America/Bogota');
+        $fecha_actual = date('Y-m-d H:i:s');
+
+        // Obtener ID del usuario
+        $usuario = Usuario::where('guid', $guid)->first();
+        $idusuario = $usuario['id'];
+
+        //verificar si el usuario se encuentra dentro del sitio y si está autorizado en la fecha correspondiente
+        $result = Permiso::
+              where('entrada', 0)
+            ->where('usuario', $idusuario)
+            ->where('fecha_inicial', '<=', $fecha_actual)
+            ->Where('fecha_final', '>=', $fecha_actual)
+            ->get();
+        if(count($result) > 0){
+            try {
+                
+                // Actualizar el valor entrada en la tabla permisos (Entrada)
+                try {
+                    Permiso::where('usuario', $idusuario)->update(['entrada' => 1]);
+                } catch (\Throwable $th) {
+                    return response() -> json(
+                        array('data' => [], 'message' => config('constants.messages.2.message')),
+                        config('constants.messages.2.code')
+                    );
+                }
+
+                // Estructurar datos para ingreso
+                $data = array(
+                    'ingreso' => $fecha_actual,
+                    'salida' => null,
+                    'puerta' => $request['puerta'],
+                    'usuario' => $idusuario
+                );
+                
+                //Agregar ingreso
+                Ingreso::insert($data);
+                $this->emitir($usuario['nombre'], true);
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.5.message')),
+                    config('constants.messages.5.code')
+                );
+            } catch (QueryException $e) {
+                return response() -> json(
+                    array('data' => $e, 'message' => config('constants.messages.2.message')),
+                    config('constants.messages.2.code')
+                );
+            }
+        }else{
+            $this->emitir("", false);
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.8.message')),
+                config('constants.messages.8.code')
+            );
+        }
+        
+    }
+	
+	public function emitir($nombre, $acceso)
+    {
+        $client = new Client(new Version2X('http://localhost:8080/'));
+        $client->initialize();
+        $client->emit('acceso', ['nombre' => $nombre, 'acceso' => $acceso]);
+        $client->close();
+    }
+
+
+    /**
+     *  Cuando un usuario registre su salida la información será actualizada a través de este método
+     *  Antes de registrar la información verica si el usuario ya se encuentra afuera del sitio
+     */
+    public function actualizar(Request $request)
+    {
+        $id = $request['id'];
+        $data = array(
+            'salida' => date('Y-m-d h:i:sa'),
+        );
+        try {
+
+            // Actualizar el valor entrada en la tabla permisos (Salida)
+            try {
+                Permiso::where('id', $permiso)->update(['entrada' => 0]);
+            } catch (\Throwable $th) {
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.2.message')),
+                    config('constants.messages.2.code')
+                );
+            }
+
+            //Actualizar ingreso
+            Ingreso::findOrFail($id) -> update($data);
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.6.message')),
+                config('constants.messages.6.code')
+            );
+        } catch (ModelNotFoundException $e) {
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.2.message')),
+                config('constants.messages.2.code')
+            );
+        }
+    }
+
+    /**
+     *   En caso que el registro no se desee almacenar más, podrá ser eliminado por medio de este método
+     */
+    public function eliminar($id)
+    {
+        $data = array(
+            'eliminado' => 1,
+        );
+        try {
+            Ingreso::findOrFail($id) -> update($data);
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.7.message')),
+                config('constants.messages.7.code')
+            );
+        } catch (ModelNotFoundException $e) {
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.2.message')),
+                config('constants.messages.2.code')
+            );
+        }
+    }
+
+    /**
+     *  Mostrar cantidad de empleados, visitantes y contratistas ingresados al dia
+     */
+    public function contar_usuarios($tipo_usuario, $fecha_inicial, $fecha_final)
+    {
+        try {
+
+            
+            date_default_timezone_set('America/Bogota');
+            if($fecha_inicial == 'null' || $fecha_final == 'null')
+            {
+                $fecha_inicial = date('Y-m-d') . " 00:00:00";
+                $fecha_final = date('Y-m-d') . " 23:59:59";
+            }else{
+                $fecha_inicial = $fecha_inicial . " 00:00:00";
+                $fecha_final = $fecha_final . " 23:59:59";
+            }
+            
+            
+            $result = Ingreso::
+                          select('ingresos.*')
+                        ->join('usuarios', 'usuarios.id', 'ingresos.usuario')
+                        ->where('usuarios.tipo_usuario', $tipo_usuario)
+                        ->where('ingresos.ingreso', '>=', $fecha_inicial)
+                        ->where('ingresos.ingreso', '<=', $fecha_final)
+                        ->get();
+                        
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.3.message')),
+                config('constants.messages.3.code')
+            );
+        } catch (ModelNotFoundException $e) {
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.2.message')),
+                config('constants.messages.2.code')
+            );
+        }
+    }
+
+    public function consultaIngreso($idIngreso)
+     {
+	    $result = Ingreso::select('ingresos.id AS id', 'ingresos.ingreso AS ingreso', 
+	   'ingresos.salida AS salida', 'puertas.descripcion AS puerta', 'usuarios.nombre AS usuario')
+	    ->from('ingresos')
+	    ->join('usuarios', 'ingresos.usuario', '=', 'usuarios.id')
+	    ->join('puertas', 'ingresos.puerta', '=', 'puertas.id')
+	    ->where('usuarios.id', '=', $idIngreso)
+	    ->get();
+	    if (count($result) > 0) {
+	      return response() -> json(
+	    array('data' => $result, 'message' => config('constants.messages.3.message')),
+	    config('constants.messages.3.code')
+	     );
+        }else{
+         return response() -> json(
+       	array('data' => $result, 'message' => config('constants.messages.4.message')),
+        config('constants.messages.4.code')
+       	);
+       }
+    }
+
+    public function exportarIngreso($id, $fecha_inicial, $fecha_final)
+     {
+         $fecha_inicial = $fecha_inicial . " 00:00:00";
+         $fecha_final = $fecha_final . " 23:59:59";
+         $result = Ingreso::select('ingresos.id AS id', 'ingresos.ingreso AS ingreso', 
+         'ingresos.salida AS salida', 'puertas.descripcion AS puerta', 'usuarios.nombre AS usuario')
+         ->from('ingresos')
+         ->join('usuarios', 'ingresos.usuario', '=', 'usuarios.id')
+         ->join('puertas', 'ingresos.puerta', '=', 'puertas.id')
+         ->where('usuarios.id', '=', $id)
+         ->where('ingreso', '>=', $fecha_inicial)
+         ->where('salida', '<=', $fecha_final)
+         ->get();
+
+        if (count($result) > 0) {
+          return response() -> json(
+            array('data' => $result, 'message' => config('constants.messages.3.message')),
+            config('constants.messages.3.code')
+          );
+        }else{
+         return response() -> json(
+        array('data' => $result, 'message' => config('constants.messages.4.message')),
+        config('constants.messages.4.code')
+        );
+       }
+    }
+
+    
+    
+}
+
