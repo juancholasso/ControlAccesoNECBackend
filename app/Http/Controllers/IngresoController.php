@@ -390,7 +390,7 @@ class IngresoController extends Controller
     public function consultaIngreso($idIngreso)
      {
 	    $result = Ingreso::select('ingresos.id AS id', 'ingresos.ingreso AS ingreso', 
-	   'ingresos.salida AS salida', 'puertas.descripcion AS puerta', 'usuarios.nombre AS usuario')
+	   'ingresos.salida AS salida', 'puertas.descripcion AS puerta', 'usuarios.nombre AS usuario', 'ingresos.fotousuario as fotousuario')
 	    ->from('ingresos')
 	    ->join('usuarios', 'ingresos.usuario', '=', 'usuarios.id')
 	    ->join('puertas', 'ingresos.puerta', '=', 'puertas.id')
