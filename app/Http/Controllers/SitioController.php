@@ -32,7 +32,7 @@ class SitioController extends Controller
 
     public function consultar($id)
     {   
-        $result = Sitio::where('eliminado', 0)->with('controles_acceso')->with('subsitios')->where('id', $id)->first();
+        $result = Sitio::where('eliminado', 0)->with('controles_acceso')->with('subsitios')->with('neoface')->where('id', $id)->first();
         if ($result != null) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),

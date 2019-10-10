@@ -18,7 +18,7 @@ class CuentaController extends Controller
      */
     public function listar()
     {   
-        $result = Cuenta::where('eliminado', 0)->with('usuario')->with('rol')->get();
+        $result = Cuenta::where('eliminado', 0)->with('rol')->get();
         if (count($result) > 0) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
@@ -37,7 +37,7 @@ class CuentaController extends Controller
      */
     public function consultar($id)
     {   
-        $result = Cuenta::where('eliminado', 0)->with('usuario')->with('rol')->where('id', $id)->first();
+        $result = Cuenta::where('eliminado', 0)->with('rol')->where('id', $id)->first();
         if ($result != null) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
@@ -63,9 +63,10 @@ class CuentaController extends Controller
         $token = token();
         //Guardar datos en array
         $data = array(
+            'nombre' => $request['nombre'],
+            'apellido' => $request['apellido'],
             'email' => $request['email'],
             'clave' => $claveEncriptada,
-            'usuario' => $request['usuario'],
             'rol' => $request['rol'],
             'token' => $token,
             'eliminado' => 0
@@ -85,8 +86,9 @@ class CuentaController extends Controller
       
         $id = $request['id'];
         $data = array(
+            'nombre' => $request['nombre'],
+            'apellido' => $request['apellido'],
             'email' => $request['email'],
-            'usuario' =>$request['usuario'],
             'rol' => $request['rol'],
         );
         try {
