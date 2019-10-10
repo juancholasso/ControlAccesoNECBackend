@@ -20,7 +20,7 @@ class LoginController extends Controller
         $email = $request['email'];
         $clave = $request['clave'];
         try{
-            $result = Cuenta::with('usuario')->with('rol')->where('email', $email)->where('eliminado', 0)->first();
+            $result = Cuenta::with('rol')->where('email', $email)->where('eliminado', 0)->first();
             if(!empty($result))
             {
                 if (password_verify($clave, $result['clave'])) {

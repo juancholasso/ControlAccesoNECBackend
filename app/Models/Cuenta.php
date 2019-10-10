@@ -12,9 +12,10 @@ class Cuenta extends Model
 	//Campos de la tabla
     protected $fillable = [
         'id', 
+        'nombre',
+        'apellido',
         'email',
         'clave',
-        'usuario',
         'rol',
         'token',
         'eliminado'
@@ -30,10 +31,6 @@ class Cuenta extends Model
     ];
 
     // LLaves foraneas
-    public function usuario()
-    {
-        return $this -> belongsTo(Usuario::class, 'usuario');
-    }
 
     public function rol()
     {
