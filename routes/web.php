@@ -76,6 +76,8 @@ $router->get('/ws/ingreso/sticker', ['uses' => 'IngresoController@sticker']);
 $router->get('/ws/ingreso/contarusuarios/{tipo_usuario}/{fecha_inicial}/{fecha_final}', ['uses' => 'IngresoController@contar_usuarios']);
 $router->get('/ws/ingreso/consultaingreso/{id}', ['uses' => 'IngresoController@consultaIngreso']);
 $router->get('/ws/ingreso/exportaringreso/{id}/{fecha_inicial}/{fecha_final}', ['uses' => 'IngresoController@exportarIngreso']);
+$router->get('/ws/ingreso/filtraringreso/{fecha_inicial}/{fecha_final}', ['uses' => 'IngresoController@filtrarxFechas']);
+$router->get('/ws/ingreso/filtrarsitio/{id}', ['uses' => 'IngresoController@filtroxSitio']);
 
 // Ingreso de equipos
 $router->get('/ws/ingresoequipo/listar', ['uses' => 'IngresoEquipoController@listar']);
@@ -146,11 +148,13 @@ $router->delete('/ws/estadoequipo/eliminar/{id}',['uses' => 'EstadoEquipoControl
 //empleados
 $router->get('/ws/empleado/listar',['uses' => 'EmpleadoController@listar']);
 $router->get('/ws/empleado/listartodos',['uses' => 'EmpleadoController@listarTodos']);
+$router->get('/ws/empleado/exportarconpermiso',['uses' => 'EmpleadoController@exportarconPermiso']);
 $router->get('/ws/empleado/consultar/{id}',['uses' => 'EmpleadoController@consultar']);
 $router->get('/ws/empleado/consultarxusuario/{id}',['uses' => 'EmpleadoController@consultarPorUsuario']);
 $router->post('/ws/empleado/insertar',['uses' => 'EmpleadoController@insertar']);
 $router->put('/ws/empleado/actualizar',['uses' => 'EmpleadoController@actualizar']);
 $router->delete('/ws/empleado/eliminar/{id}',['uses' => 'EmpleadoController@eliminar']);
+
 
 //visitantes
 $router->get('/ws/visitante/listar',['uses' => 'VisitanteController@listar']);

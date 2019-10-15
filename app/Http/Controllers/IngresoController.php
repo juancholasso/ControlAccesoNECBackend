@@ -436,6 +436,69 @@ class IngresoController extends Controller
        }
     }
 
+    public function filtrarxFechas($fecha_inicial, $fecha_final)
+    {
+        $fecha_inicial = $fecha_inicial . " 00:00:00";
+         $fecha_final = $fecha_final . " 23:59:59";
+         $result = Ingreso::select('ingresos.id AS id', 'ingresos.ingreso AS ingreso', 
+         'ingresos.salida AS salida', 'puertas.descripcion AS puerta', 'usuarios.nombre AS usuario', 'usuarios.documento as documento',
+         'usuarios.nombre AS usuario', 'usuarios.documento as documento', 
+         'usuarios.apellido as apellido', 'usuarios.telefono as telefono', 'usuarios.neoface as neoface')
+         ->from('ingresos') 
+              
+         ->join('usuarios', 'ingresos.usuario', '=', 'usuarios.id')
+         ->join('puertas', 'ingresos.puerta', '=', 'puertas.id')
+         ->where('ingreso', '>=', $fecha_inicial)
+         ->where('salida', '<=', $fecha_final)
+         ->get();
+
+        if (count($result) > 0) {
+          return response() -> json(
+            array('data' => $result, 'message' => config('constants.messages.3.message')),
+            config('constants.messages.3.code')
+          );
+        }else{
+         return response() -> json(
+        array('data' => $result, 'message' => config('constants.messages.4.message')),
+        config('constants.messages.4.code')
+        );
+       }
+
+    }
+
+    public function filtroxSitio($id)
+    {
+        $result = Ingreso::select('ingresos.ingreso AS ingreso', 
+         'ingresos.salida AS salida', 'puertas.descripcion AS puerta',
+         'usuarios.documento', 'usuarios.nombre', 'usuarios.apellido', 'usuarios.telefono', 'usuarios.neoface',
+         'tipos_usuarios.descripcion AS tipo_usuario',
+         'grupos_usuarios.nombre AS grupo',
+         'areas_usuarios.descripcion AS area',
+         'sitios.nombre AS sitio')
+         ->from('ingresos')
+         ->join('usuarios', 'ingresos.usuario', '=', 'usuarios.id')
+         ->join('puertas', 'ingresos.puerta', '=', 'puertas.id')
+         ->join('subsitios', 'subsitios.id', '=', 'puertas.subsitio')
+         ->join('sitios', 'sitios.id', '=', 'subsitios.id')
+         ->join('tipos_usuarios', 'tipos_usuarios.id', '=', 'usuarios.tipo_usuario')
+         ->join('grupos_usuarios', 'grupos_usuarios.id', '=', 'usuarios.grupo')
+         ->join('areas_usuarios', 'areas_usuarios.id', '=', 'usuarios.area')
+         ->where('sitios.id', '=', $id)
+         //->with('usuario')
+         ->get();
+         if (count($result) > 0) {
+            return response() -> json(
+              array('data' => $result, 'message' => config('constants.messages.3.message')),
+              config('constants.messages.3.code')
+            );
+          }else{
+           return response() -> json(
+          array('data' => $result, 'message' => config('constants.messages.4.message')),
+          config('constants.messages.4.code')
+          );
+         }
+    }
+
     
     
 }
