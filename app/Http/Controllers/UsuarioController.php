@@ -44,7 +44,6 @@ class UsuarioController extends Controller
     {   
         $result = Usuario::with('tipo_usuario')
 	    ->with('grupo')
-	    ->where('eliminado',0)
             ->where('tipo_usuario', $id)
             ->get();
 
@@ -224,6 +223,29 @@ class UsuarioController extends Controller
     {    
 	$data = array(
             'eliminado' => 1,
+        );
+	//$neoface = new NeoFaceController;
+        //$statusResultado = $neoface->ELIMINAR_USUARIO($usuario ->guid);
+        $usuario = Usuario::find($id);
+        
+        $result = Usuario::findOrFail($id) -> update($data);        
+        
+        if (count((array)($result)) > 0) {
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.7.message')), config('constants.messages.7.code')
+            );
+        }
+        else{
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.2.message')),
+                config('constants.messages.2.code')
+            );
+        }
+    }
+
+    public function eliminarNeoface($id)
+    {    
+	$data = array(
             'neoface' => 0
         );
 	//$neoface = new NeoFaceController;

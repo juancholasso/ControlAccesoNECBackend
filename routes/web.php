@@ -20,6 +20,7 @@ $router->post('/ws/usuario/insertar', ['uses' => 'UsuarioController@insertar']);
 $router->post('/ws/usuario/foto', ['uses' => 'UsuarioController@foto']);
 $router->post('/ws/usuario/actualizar', ['uses' => 'UsuarioController@actualizar']);
 $router->delete('/ws/usuario/eliminar/{id}', ['uses' => 'UsuarioController@eliminar']);
+$router->delete('/ws/usuario/eliminarneoface/{id}', ['uses' => 'UsuarioController@eliminarNeoface']);
 $router->post('/ws/usuario/eliminacionmasiva', ['uses' => 'UsuarioController@eliminacionMasiva']);
 
 
