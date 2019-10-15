@@ -247,8 +247,29 @@ class PermisoController extends Controller
         $data = array(
             'permiso' => $request['permiso'],
             'subsitios' => $request['subsitios'],
-            'eliminado' => 0,
+            'marcotodo' => $request['marcotodo'],
+            'eliminado' => 0, 
         );
+            if($data['marcotodo'] == true){
+                try{
+                    $permiso = Permiso::findOrFail($data['permiso']);
+                     $result = Subsitio::where('eliminado',0)->get();
+                foreach($result as $subsitio){
+                    $permiso->subsitios()->attach($subsitio['id']);
+                }
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.5.message')),
+                    config('constants.messages.5.code')
+                );
+
+                }catch (QueryException $e){
+                    return response() -> json(
+                        array('data' => $e, 'message' => config('constants.messages.2.message')),
+                        config('constants.messages.2.code')
+                    );
+                } 
+            }else{
+
         try {
 
             $permiso = Permiso::findOrFail($data['permiso']);
@@ -257,16 +278,16 @@ class PermisoController extends Controller
                 $subsitio = Subsitio::findOrFail($idsubsitio);
                 $permiso->subsitios()->attach($subsitio);
             }
-           
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.5.message')),
                 config('constants.messages.5.code')
             );
-        } catch (QueryException $e) {
-            return response() -> json(
-                array('data' => $e, 'message' => config('constants.messages.2.message')),
-                config('constants.messages.2.code')
-            );
+            }catch (QueryException $e) {
+                return response() -> json(
+                    array('data' => $e, 'message' => config('constants.messages.2.message')),
+                    config('constants.messages.2.code')
+                );
+            }
         }
     }
 	public function editarPermisoxSubsitio(Request $request){
@@ -274,27 +295,51 @@ class PermisoController extends Controller
         $data = array(
             'permiso' => $request['permiso'],
             'subsitios' => $request['subsitios'],
+            'marcotodo' => $request['marcotodo'],
             'eliminado' => 0,
         );
-        try {
 
-            $permiso = Permiso::findOrFail($data['permiso']);
-          DB::table('permisos_subsitio')->where('permiso', '=', $data['permiso'])->delete();
-            foreach($request['subsitios'] as $idsubsitio){
-                $subsitio = Subsitio::findOrFail($idsubsitio);
-                $permiso->subsitios()->attach($subsitio);
+        if($data['marcotodo'] == true){
+            try{
+                $permiso = Permiso::findOrFail($data['permiso']);
+                DB::table('permisos_subsitio')->where('permiso', '=', $data['permiso'])->delete();
+                 $result = Subsitio::where('eliminado',0)->get();
+            foreach($result as $subsitio){
+                $permiso->subsitios()->attach($subsitio['id']);
             }
-           
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.5.message')),
                 config('constants.messages.5.code')
             );
-        } catch (QueryException $e) {
-            return response() -> json(
-                array('data' => $e, 'message' => config('constants.messages.2.message')),
-                config('constants.messages.2.code')
-            );
+
+            }catch (QueryException $e){
+                return response() -> json(
+                    array('data' => $e, 'message' => config('constants.messages.2.message')),
+                    config('constants.messages.2.code')
+                );
+            } 
+        }else{
+            try {
+
+                $permiso = Permiso::findOrFail($data['permiso']);
+              DB::table('permisos_subsitio')->where('permiso', '=', $data['permiso'])->delete();
+                foreach($request['subsitios'] as $idsubsitio){
+                    $subsitio = Subsitio::findOrFail($idsubsitio);
+                    $permiso->subsitios()->attach($subsitio);
+                }
+               
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.5.message')),
+                    config('constants.messages.5.code')
+                );
+            } catch (QueryException $e) {
+                return response() -> json(
+                    array('data' => $e, 'message' => config('constants.messages.2.message')),
+                    config('constants.messages.2.code')
+                );
+            }
         }
+       
     }
 
     public function sincronizacionUsuarioPorPermiso($idusuario){
