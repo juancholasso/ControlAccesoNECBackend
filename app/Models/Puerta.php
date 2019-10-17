@@ -40,4 +40,11 @@ class Puerta extends Model
         return $this -> belongsTo(Subsitio::class, 'subsitio');
     }
 
+
+    public function controladoras()
+    {
+        return $this -> hasMany(Controladora::class, 'puerta', 'id');
+    }
+
+
 }

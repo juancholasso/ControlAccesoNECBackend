@@ -36,7 +36,8 @@ class PuertaController extends Controller
     public function consultar($id)
     {
         try{
-            $result = Puerta::where('id', $id)->first(); //Puerta::with('tipo_puerta')->with('subsitio')->where('id', $id)->where('eliminado', 0)->first();
+            $result = Puerta::where('id', $id)
+            ->with('controladoras')->first(); //Puerta::with('tipo_puerta')->with('subsitio')->where('id', $id)->where('eliminado', 0)->first();
             return response()-> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code'));
