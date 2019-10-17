@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Models\Usuario;
 use App\Models\Sitio;
+use App\Models\Subsitio;
 use App\Models\Neoface;
+use App\Models\Permiso;
+use App\Models\PermisosSubsitio;
 
 class NeoFaceController extends Controller
 {
@@ -24,71 +27,112 @@ class NeoFaceController extends Controller
         if(isset($usuario))
             $usuario = $usuario->toArray();
 
+        $idUsuario= $usuario['id']; 
         $guid = $usuario['guid'];
         $guidgrupo = $usuario['grupo']['guid'];
 
-    
-        $sitio = Sitio::with('neoface')->where('id', '1')->first()->toArray();
-        $neoface = $sitio['neoface'];
-        $ip = $sitio['neoface']['ip'];
-        $port = $sitio['neoface']['puerto'];
-        $user = $sitio['neoface']['usuario'];
-        $pass = $sitio['neoface']['clave'];
+        //Consultar los id de los permisos del usuario//
+        $idPermisos=Permiso::where('usuario', $idUsuario)->get()->pluck('id')->toArray();
         
-        //Prueba de url;
-       /*  $neofaceurl = 'http://'.$ip.':'.$port.'/'.$guid.'/'.$user.'/'.$pass;
-        return $neofaceurl; */
+        $todosSubsitios = array();
+        foreach ($idPermisos as $idPermiso) {
+            //traer los subsitios por cada id de Permiso del usuario
+           $idSubsitio = PermisosSubsitio::where('permiso', $idPermiso)->get()->pluck('subsitio')->toArray();
+          
+           $stringSubsitios = implode(',',$idSubsitio);
+            array_push($todosSubsitios, $stringSubsitios);
+            $stringSubsitios2 =  implode(',',$todosSubsitios);
+            $explodeSubsitios = explode(',', $stringSubsitios2);
 
-        $sync = new NeoFaceController();
+            $subsitios = array_unique($explodeSubsitios);
+        }
+        $sitios= array();
+        foreach ($subsitios as $subsitio ) {
 
-         // Si la sincronización fue exitosa se actualiza el estado en neoface
-        
-        $consulta = $sync -> CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass);
-        if($consulta == true)
-        {
-            $edicion = $sync->EDITAR_USUARIO($usuario);
+            $sitio = Subsitio::where('id', $subsitio)->get()->pluck('sitio')->toArray();
+            $stringSitios = implode(',',$sitio);
+            array_push($sitios, $stringSitios);
+            $todosSitios= array_unique($sitios);
+        }
+        unset($todosSitios[0]);
+        $sincronizarTodos = true;
+        foreach ($todosSitios as $idSitio) {
+            # code...
+        /*
+            $sitio = Sitio::with('neoface')->where('id', $idSitio)->first()->toArray();
+            $neoface = $sitio['neoface'];
+            $ip = $sitio['neoface']['ip'];
+            $port = $sitio['neoface']['puerto'];
+            $user = $sitio['neoface']['usuario'];
+            $pass = $sitio['neoface']['clave'];
+             */
+            $ip = '172.20.96.233';
+            $port= '8790';
+            $user= 'system';
+            $pass= 'system';
+            //Prueba de url;
+            $neofaceurl = 'http://'.$ip.':'.$port.'/'.$guid.'/'.$user.'/'.$pass;
+            
+            
 
-            // Si la edición del usuario fue exitosa
-            if($edicion == true)
+             $sync = new NeoFaceController();
+
+            // Si la sincronización fue exitosa se actualiza el estado en neoface
+            
+            $consulta = $sync -> CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass);
+            if($consulta == true)
             {
-                // Se procede a actualizar la foto
-                // Si la actualización de la foto fue exitosa
-                $foto = $sync -> ACTUALIZAR_FOTO($usuario);
-                if($foto == true)
+                $edicion = $sync->EDITAR_USUARIO($usuario);
+                
+                // Si la edición del usuario fue exitosa
+                if($edicion == true)
                 {
+                    // Se procede a actualizar la foto
+                    // Si la actualización de la foto fue exitosa
+                    $foto = $sync -> ACTUALIZAR_FOTO($usuario);
+                    if($foto == true)
+                    {
+                        return response() -> json(
+                            array('data' => [], 'message' => config('constants.messages.12.message')),
+                            config('constants.messages.12.code')
+                        );
+                    }else{
+                        return response() -> json(
+                            array('data' => [], 'message' => config('constants.messages.14.message')),
+                            config('constants.messages.14.code')
+                        );
+                    }
+                }else{
+                    $data = array('neoface'  =>  0);
+                    Usuario::where('id', $id)->update($data);
                     return response() -> json(
-                        array('data' => [], 'message' => config('constants.messages.12.message')),
-                        config('constants.messages.12.code')
+                        array('data' => [], 'message' => config('constants.messages.2.message')),
+                        config('constants.messages.2.code')
+                    );
+                } 
+            }else{
+                
+                $agregado = $sync -> AGREGAR_USUARIO($usuario);
+               
+                if($agregado == true)
+                {
+                    
+                    $data = array('neoface'  =>  1);
+                    Usuario::where('id', $id)->update($data);
+                    return response() -> json(
+                        array('data' => [], 'message' => config('constants.messages.5.message')),
+                        config('constants.messages.5.code')
                     );
                 }else{
+                   
+                    $data = array('neoface'  =>  0);
+                    Usuario::where('id', $id)->update($data);
                     return response() -> json(
-                        array('data' => [], 'message' => config('constants.messages.14.message')),
-                        config('constants.messages.14.code')
+                        array('data' => [], 'message' => config('constants.messages.2.message')),
+                        config('constants.messages.2.code')
                     );
-                }
-            }else{
-                return response() -> json(
-                    array('data' => [], 'message' => config('constants.messages.2.message')),
-                    config('constants.messages.2.code')
-                );
-            } 
-        }else{
-           
-            $agregado = $sync -> AGREGAR_USUARIO($usuario);
-            if($agregado == true)
-            {
-                $data = array('neoface'  =>  1);
-                Usuario::where('id', $id)->update($data);
-                return response() -> json(
-                    array('data' => [], 'message' => config('constants.messages.5.message')),
-                    config('constants.messages.5.code')
-                );
-            }else{
-                return response() -> json(
-                    array('data' => [], 'message' => config('constants.messages.2.message')),
-                    config('constants.messages.2.code')
-                );
-            }   
+                }   
+            }    
         }
     }
 
@@ -97,6 +141,7 @@ class NeoFaceController extends Controller
      */
     public function CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass)
     {
+
         try {
             // Consultar información désde neoface
             $client = new Client();
