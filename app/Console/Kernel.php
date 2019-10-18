@@ -7,6 +7,7 @@ use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 use App\Models\Permiso;
 use App\Models\Usuario;
 use App\Http\Controllers\NeoFaceController;
+use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\DB;
 use ElephantIO\Client;
 use ElephantIO\Engine\SocketIO\Version2X;
@@ -112,5 +113,16 @@ class Kernel extends ConsoleKernel
             }
         
         })->hourly();//->everyMinute();
+        $schedule->call(function () {
+            $log = new LogController;
+            
+             // Emitir al socket
+             $client = new Client(new Version2X('http://localhost:8080/',));
+             $client->initialize();
+             $client->emit('campanita',$log->not());
+             $client->close();
+        })->everyMinute();
+
     }
+   
 }
