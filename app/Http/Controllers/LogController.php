@@ -44,7 +44,7 @@ class LogController extends Controller
             ->with('rol')
             ->orderBy('id','desc')
             ->skip(0)
-            ->take(10)
+            ->take(15)
             ->get();
         if (count($result) > 0) {
             return response() -> json(
