@@ -29,7 +29,7 @@ class PermisoController extends Controller
                 //->with('turnos')
                 ->with('excepciones')
                 ->get();
-        if (count($result) > 0) {
+        if (!count($result) > 0) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
