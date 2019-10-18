@@ -147,9 +147,12 @@ class ContratistaController extends Controller
             'eliminado' => 1,
         );
         try {
-            $contratista=Contratista::findOrFail($id);
-            Usuario::findOrFail($contratista->usuario) -> update($data);
+            $contratista = Contratista::findOrFail($id);
+            $usuario = Usuario::findOrFail($contratista->usuario);
+            $usuario -> update($data);
             $contratista -> update($data);
+            $neoface = new NeoFaceController;
+            $desenrolNeoface = $neoface->ELIMINAR_USUARIO($usuario->guid);
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.7.message')),
                 config('constants.messages.7.code')
