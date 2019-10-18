@@ -21,7 +21,7 @@ class NeoFaceController extends Controller
      */
     public static function SINCRONIZAR_USUARIO($id)
     {
-
+        
         // Consultar guid y guidgrupo de usuario
         $usuario = Usuario::where('id', $id)->with('grupo')->first();
         if(isset($usuario))
@@ -47,6 +47,7 @@ class NeoFaceController extends Controller
             $subsitios = array_unique($explodeSubsitios);
         }
         $sitios= array();
+       
         foreach ($subsitios as $subsitio ) {
 
             $sitio = Subsitio::where('id', $subsitio)->get()->pluck('sitio')->toArray();
@@ -54,22 +55,24 @@ class NeoFaceController extends Controller
             array_push($sitios, $stringSitios);
             $todosSitios= array_unique($sitios);
         }
+
         unset($todosSitios[0]);
         $sincronizarTodos = true;
-        foreach ($todosSitios as $idSitio) {
+        foreach ($sitios as $idSitio) {
             # code...
-        /*
+        
             $sitio = Sitio::with('neoface')->where('id', $idSitio)->first()->toArray();
+            
             $neoface = $sitio['neoface'];
             $ip = $sitio['neoface']['ip'];
             $port = $sitio['neoface']['puerto'];
             $user = $sitio['neoface']['usuario'];
             $pass = $sitio['neoface']['clave'];
-             */
-            $ip = '172.20.96.233';
-            $port= '8790';
-            $user= 'system';
-            $pass= 'system';
+            
+            // $ip = '172.20.96.233';
+            // $port= '8790';
+            // $user= 'system';
+            // $pass= 'system';
             //Prueba de url;
             $neofaceurl = 'http://'.$ip.':'.$port.'/'.$guid.'/'.$user.'/'.$pass;
             
