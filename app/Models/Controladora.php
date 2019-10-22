@@ -16,6 +16,7 @@ class Controladora extends Model
         'mac',
         'command_code',
         'parameters',
+        'parameters_salida',
         'puerta',
         'fecha',
         'eliminado'
