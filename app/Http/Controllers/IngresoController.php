@@ -227,7 +227,7 @@ class IngresoController extends Controller
                 'commandcode'=>$controladora['command_code'],
                 'evento'=>"control",
                 'macaddress'=>$controladora['mac'],
-                'parameters'=> $controladora['parameters']
+                'parameters'=> $controladora['parameters_salida']
             ]);
          }
          $client->close();
