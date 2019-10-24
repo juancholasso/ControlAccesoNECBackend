@@ -16,8 +16,8 @@ class ConfiguracionController extends Controller
      */
     public function listar()
     {   
-        $result = Configuracion::all();
-        if (count($result) > 0) {
+        $result = Configuracion::first();
+        if ($result != null) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -53,6 +53,7 @@ class ConfiguracionController extends Controller
      */
     public function insertar(Request $request)
     {
+
         $filevar = "logo";
         //Si el archivo se ha cargado
         if($request->hasFile($filevar))
@@ -67,7 +68,6 @@ class ConfiguracionController extends Controller
                     $extension == "jpg"  || 
                     $extension == "png"  
                 ){
-
                     //Componer archivo
                     $destinationPath = "./uploads/configuration/";
                     $fileName = rand() . date('YmHis') . "." .$extension;
@@ -75,16 +75,16 @@ class ConfiguracionController extends Controller
                     
                     //Agregar a la base de datos
                     $data = array(
-                        'logo' => $fileName,
                         'ipws' => $request['ipws'],
                         'identificacion' => $request['identificacion'],
                         'nombre' => $request['nombre'],
                         'telefono' => $request['telefono'],
                         'correo' => $request['correo'],
+                        'logo'=> $fileName,
                         'eliminado' => 0
                     );
                     try {
-                        $permiso = Configuracion::insert($data);
+                        $configuracion = Configuracion::insert($data);
                         return response() -> json(
                             array('data' => [], 'message' => config('constants.messages.5.message')),
                             config('constants.messages.5.code')
@@ -117,7 +117,7 @@ class ConfiguracionController extends Controller
                 'correo' => $request['correo'],
             );
             try {
-                $permiso = Configuracion::insert($data);
+                $configuracion = Configuracion::insert($data);
                 return response() -> json(
                     array('data' => [], 'message' => config('constants.messages.5.message')),
                     config('constants.messages.5.code')

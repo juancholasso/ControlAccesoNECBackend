@@ -14,7 +14,11 @@ class Configuracion extends Model
         'id',
         'logo',
         'ipws',
-        'eliminado'
+        'eliminado',
+        'identificacion',
+        'nombre',
+        'telefono',
+        'correo' 
     ];
       //Llave primaria
       protected $primaryKey = 'id';
