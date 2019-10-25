@@ -27,7 +27,7 @@ class EmpleadoController extends Controller
                 ->where('eliminado', 0)
                 ->get();
 
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -46,7 +46,7 @@ class EmpleadoController extends Controller
     public function listarTodos()
     {   
         $result = Empleado::with('usuario')->with('usuario.grupo')->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -192,7 +192,7 @@ class EmpleadoController extends Controller
         FROM empleados
         
         LEFT JOIN usuarios
-        ON usuarios.id = empleados.usuario
+        ON usuarios.id = empleados.usuarionombre.id 
         
         LEFT JOIN permisos
         ON permisos.usuario = usuarios.id

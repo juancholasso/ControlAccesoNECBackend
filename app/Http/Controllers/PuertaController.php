@@ -36,7 +36,27 @@ class PuertaController extends Controller
     public function consultar($id)
     {
         try{
-            $result = Puerta::where('id', $id)
+            $result = Puerta::where('id', $id)->where('eliminado', 0)
+            ->with('controladoras')->first(); //Puerta::with('tipo_puerta')->with('subsitio')->where('id', $id)->where('eliminado', 0)->first();
+            return response()-> json(
+                array('data' => $result, 'message' => config('constants.messages.3.message')),
+                config('constants.messages.3.code'));
+        }catch (Exception $ex){
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.4.message')),
+                config('constants.messages.4.code')
+            );
+        }
+    }
+
+
+    /**
+     *  Consultar las puertas
+     */
+    public function consultarPuertasxSubsitio($idsubsitio)
+    {
+        try{
+            $result = Puerta::where('subsitio', '3')->where('eliminado', 0)
             ->with('controladoras')->first(); //Puerta::with('tipo_puerta')->with('subsitio')->where('id', $id)->where('eliminado', 0)->first();
             return response()-> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),

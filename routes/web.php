@@ -162,6 +162,7 @@ $router->get('/ws/visitante/listar',['uses' => 'VisitanteController@listar']);
 $router->get('/ws/visitante/listartodos',['uses' => 'VisitanteController@listarTodos']);
 $router->get('/ws/visitante/consultar/{id}',['uses' => 'VisitanteController@consultar']);
 $router->get('/ws/visitante/consultarxusuario/{id}',['uses' => 'VisitanteController@consultarPorUsuario']);
+$router->get('/ws/visitante/exportarxpermiso',['uses' => 'VisitanteController@exportarconPermiso']);
 $router->post('/ws/visitante/insertar',['uses' => 'VisitanteController@insertar']);
 $router->put('/ws/visitante/actualizar',['uses' => 'VisitanteController@actualizar']);
 $router->delete('/ws/visitante/eliminar/{id}',['uses' => 'VisitanteController@eliminar']);
@@ -180,6 +181,8 @@ $router->get('/ws/puerta/consultar/{id}',['uses' => 'PuertaController@consultar'
 $router->post('/ws/puerta/insertar',['uses' => 'PuertaController@insertar']);
 $router->put('/ws/puerta/actualizar',['uses' => 'PuertaController@actualizar']);
 $router->delete('/ws/puerta/eliminar/{id}',['uses' => 'PuertaController@eliminar']);
+$router->get('/ws/puerta/consultarpuertaxsubsitio/{id}', ['uses' => 'PuertaController@consultarPuertasxSubsitio']);
+
 
 //tipo de puertas
 $router->get('/ws/tipopuerta/listar',['uses' => 'TipoPuertaController@listar']);
@@ -351,6 +354,8 @@ $router->delete('/ws/tipodocumentocontratista/eliminar/{id}', ['uses' => 'TipoDo
 $router->get('/ws/controladora/listar',['uses' => 'ControladoraController@listar']);
 $router->get('/ws/controladora/consultar/{id}',['uses' => 'ControladoraController@consultar']);
 $router->get('/ws/controladora/consultarpuerta/{id}',['uses' => 'ControladoraController@consultarPuerta']);
+$router->get('/ws/controladora/consultarpuerta/{id}',['uses' => 'ControladoraController@consultarPuerta']);
+
 $router->post('/ws/controladora/insertar',['uses' => 'ControladoraController@insertar']);
 $router->put('/ws/controladora/actualizar',['uses' => 'ControladoraController@actualizar']);
 $router->delete('/ws/controladora/eliminar/{id}',['uses' => 'ControladoraController@eliminar']);

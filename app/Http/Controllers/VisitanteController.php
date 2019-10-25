@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\NeoFaceController;
+use DB;
 
 
 class VisitanteController extends Controller
@@ -25,7 +26,7 @@ class VisitanteController extends Controller
                 ->with('usuario.tipo_documento')
                 ->where('eliminado', 0)
                 ->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -41,7 +42,7 @@ class VisitanteController extends Controller
     public function listarTodos()
     {   
         $result = Visitante::with('usuario')->with('usuario.grupo')->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -178,5 +179,13 @@ class VisitanteController extends Controller
                 config('constants.messages.2.code')
             );
         }
+    }
+
+
+    public function exportarconPermiso()
+    {
+        
+
+       
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+
 class ContratistaController extends Controller
 {
 
@@ -18,7 +19,7 @@ class ContratistaController extends Controller
     public function listar()
     {   
         $result = Contratista::with('usuario')->where('eliminado', 0)->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -34,7 +35,7 @@ class ContratistaController extends Controller
     public function listarTodos()
     {   
         $result = Contratista::with('usuario')->with('usuario.grupo')->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
