@@ -184,8 +184,29 @@ class VisitanteController extends Controller
 
     public function exportarconPermiso()
     {
-        
+        $result =  \DB::select('SELECT tipos_permisos.descripcion, permisos.fecha_inicial AS fecha_inicial, permisos.fecha_final AS fecha_final, usuarios.nombre AS nombre, usuarios.apellido AS apellido, usuarios.documento AS documento
 
-       
+        FROM visitantes
+        
+        LEFT JOIN usuarios
+        ON usuarios.id = visitantes.usuario
+        
+        LEFT JOIN permisos
+        ON permisos.usuario = usuarios.id
+        
+        LEFT JOIN tipos_permisos
+        on tipos_permisos.id = permisos.tipo_permiso');
+
+        if (count($result) > 0) {
+            return response() -> json(
+              array('data' => $result, 'message' => config('constants.messages.3.message')),
+              config('constants.messages.3.code')
+            );
+          }else{
+           return response() -> json(
+          array('data' => $result, 'message' => config('constants.messages.4.message')),
+          config('constants.messages.4.code')
+          );
+         }
     }
 }

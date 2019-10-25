@@ -192,7 +192,7 @@ class EmpleadoController extends Controller
         FROM empleados
         
         LEFT JOIN usuarios
-        ON usuarios.id = empleados.usuarionombre.id 
+        ON usuarios.id = empleados.usuario
         
         LEFT JOIN permisos
         ON permisos.usuario = usuarios.id
