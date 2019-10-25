@@ -266,7 +266,7 @@ $router->delete('/ws/cuenta/eliminar/{id}', ['uses' => 'CuentaController@elimina
 $router->get('/ws/controlacceso/listar',['uses' => 'ControlAccesoController@listar']);
 $router->get('/ws/controlacceso/consultar/{id}',['uses' => 'ControlAccesoController@consultar']);
 $router->post('/ws/controlacceso/insertar',['uses' => 'ControlAccesoController@insertar']);
-$router->put('/ws/controlacceso/actualizar',['uses' => 'ControlAccesoController@actualizar']);
+$router->post('/ws/controlacceso/actualizar',['uses' => 'ControlAccesoController@actualizar']);
 $router->delete('/ws/controlacceso/eliminar/{id}',['uses' => 'ControlAccesoController@eliminar']);
 
 //Turnos
