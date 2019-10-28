@@ -37,7 +37,8 @@ class Sitio extends Model
     // LLaves foraneas subsitio
     public function subsitios()
     {
-        return $this->hasMany(Subsitio::class, 'sitio', 'id');
+        return $this->hasMany(Subsitio::class, 'sitio', 'id')
+        ->where('eliminado', '=', '0');
 	
     }
 
