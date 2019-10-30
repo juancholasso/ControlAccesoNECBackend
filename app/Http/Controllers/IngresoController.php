@@ -145,7 +145,7 @@ class IngresoController extends Controller
         
          // Si el usuario se encuentra afuera
         if(!$ingresoPermitido){
-            $this->emitir($usuario, false, $puerta, "Entrada No Permitida", "");
+            $this->emitir($usuario, false, $puerta, "Entrada No Permitida", "",$puertaid);
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.8.message')),
                 config('constants.messages.8.code')
