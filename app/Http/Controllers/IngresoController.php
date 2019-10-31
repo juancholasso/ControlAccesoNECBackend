@@ -120,6 +120,11 @@ class IngresoController extends Controller
         //Subsitio al cual quiere ingresar            
         $subsitioIngresarId = $puerta->subsitio;
 
+        $subSitio = Subsitio:: find($subsitioIngresarId);
+
+        $sitioIngresoid = $subSitio->sitio;
+
+
         //verificar si el usuario se encuentra dentro del sitio y si está autorizado en la fecha correspondiente
         $result = Permiso::
               where('entrada', 0)
@@ -145,7 +150,7 @@ class IngresoController extends Controller
         
          // Si el usuario se encuentra afuera
         if(!$ingresoPermitido){
-            $this->emitir($usuario, false, $puerta, "Entrada No Permitida", "",$puertaid);
+            $this->emitir($usuario, false, $puerta, "Entrada No Permitida", "");
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.8.message')),
                 config('constants.messages.8.code')
@@ -164,9 +169,19 @@ class IngresoController extends Controller
                     );
                 }
 
+                //Traer infomración del neoface para traer imagen match
 
+                $idNeoface= Sitio:: where ('id', $sitioIngresoid)
+                ->pluck('neoface')
+                ->first();
+                $neoface= Neoface:: where('id', $idNeoface)->first();
+                $ip= $neoface->ip;
+                $port=$neoface->puerto;
+                $user=$neoface->usuario;
+                $pass=$neoface->clave;
+                
                 //Traer imagen del match
-                $imagenMatchB64 = $neoface->TRAER_IMAGEN_MATCH($idmatch)->data;                
+                $imagenMatchB64 = $neoface->TRAER_IMAGEN_MATCH($idmatch, $ip, $port, $user, $pass)->data;                
                 $content = base64_decode($imagenMatchB64);
                 $file = fopen(base_path().'/public/uploads/match/'.$idmatch.'.jpg', "wb");
                 fwrite($file, $content);

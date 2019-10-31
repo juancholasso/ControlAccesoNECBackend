@@ -11,6 +11,7 @@ use App\Models\Sitio;
 use App\Models\Subsitio;
 use App\Models\Neoface;
 use App\Models\Permiso;
+use App\Models\Puerta;
 use App\Models\PermisosSubsitio;
 
 class NeoFaceController extends Controller
@@ -21,7 +22,6 @@ class NeoFaceController extends Controller
      */
     public static function SINCRONIZAR_USUARIO($id)
     {
-
         // Consultar guid y guidgrupo de usuario
         $usuario = Usuario::where('id', $id)->with('grupo')->first();
         if(isset($usuario))
@@ -302,42 +302,8 @@ class NeoFaceController extends Controller
 
                 $eliminado = $sync -> ELIMINAR_USUARIO_NEOFACES($usuario, $ip, $port, $user, $pass);
                 
-                print_r($eliminado);
+                return $eliminado;
                 
-                /* if($eliminado == 1)
-                {  
-                    $data = array('neoface'  =>  0);
-                    Usuario::where('id', $id)->update($data);
-                    return response() -> json(
-                        array('data' => [], 'message' => config('constants.messages.5.message')),
-                        config('constants.messages.5.code')
-                    );
-                }else{
-                    return false;
-                } */
-                   // $curl = curl_init();
-                    /* curl_setopt_array($curl, array(
-                        CURLOPT_URL => $neofaceurl,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => "",
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 30,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => "POST",
-                        CURLOPT_POSTFIELDS => "ip=".$ip."&port=".$port."&user=".$user."&pass=".$pass."&guid=".$guid,
-                        CURLOPT_HTTPHEADER => array( */
-                       //  "Accept: */*",
-                       /* "Accept-Encoding: gzip, deflate",
-                        "Cache-Control: no-cache",
-                        "Connection: keep-alive",
-                        "Content-Length: 92",
-                        "Content-Type: application/x-www-form-urlencoded",
-                        "Host: localhost",
-                        "Postman-Token: b54e102a-9333-4932-9ee1-15bae3b61ce9,1c09c6a2-ce1d-4fb9-97f9-1af09b927a66",
-                        "User-Agent: PostmanRuntime/7.17.1",
-                        "cache-control: no-cache"
-                        ),
-                    )); */
                     
                 }
     }
@@ -434,33 +400,9 @@ class NeoFaceController extends Controller
     }
 
 
-    public static function TRAER_IMAGEN_MATCH($idmatch){
+    public static function TRAER_IMAGEN_MATCH($idmatch, $ip, $port, $user, $pass){
         
         try{
-
-            $usuario = Usuario::where('guid', $guid)->with('grupo')->first();
-            $id= $usuario['id'];
-
-            $result = PermisosSubsitio::select('permiso', 'permisos.usuario AS idUsuario', 'usuarios.nombre AS nombre',
-            'subsitios.sitio AS sitio', 'sitios.neoface AS neoface',
-            'neofaces.ip AS ip', 'neofaces.puerto AS puerto' , 'neofaces.usuario as usuario', 'neofaces.clave as clave'
-            )
-            ->from('permisos_subsitio')
-            ->join('permisos', 'permisos_subsitio.permiso', '=', 'permisos.id')
-            ->join('usuarios', 'permisos.usuario', '=', 'usuarios.id')
-            ->join('subsitios', 'permisos_subsitio.subsitio', '=', 'subsitios.id')
-            ->join('sitios', 'subsitios.sitio', '=', 'sitios.id')
-            ->join('neofaces', 'sitios.neoface', '=', 'neofaces.id')
-            ->where('usuarios.id', '=', $id)
-            ->get()
-            ->toArray();
-
-            $sitio = Sitio::with('neoface')->where('id', '1')->first()->toArray();
-            $neoface = $sitio['neoface'];
-            $ip = $sitio['neoface']['ip'];
-            $port = $sitio['neoface']['puerto'];
-            $user = $sitio['neoface']['usuario'];
-            $pass = $sitio['neoface']['clave'];
             
             $curl = curl_init();
 
@@ -491,15 +433,24 @@ class NeoFaceController extends Controller
     }
 
 
-    public function GETAUTHTOKEN(){
+    public function GETAUTHTOKEN($idPuerta){
         try{
-            $sitio = Sitio::with('neoface')->where('id', '1')->first()->toArray();
-            $neoface = $sitio['neoface'];
-            $ip = $sitio['neoface']['ip'];
-            $port = $sitio['neoface']['puerto'];
-            $user = $sitio['neoface']['usuario'];
-            $pass = $sitio['neoface']['clave'];
 
+            $result = Puerta::select('puertas.id As idPuerta', 'neofaces.ip', 'neofaces.puerto', 'neofaces.usuario', 'neofaces.clave')
+        ->from('puertas')
+        ->join('subsitios', 'puertas.subsitio', '=', 'subsitios.id')
+        ->join('sitios', 'subsitios.sitio', '=', 'sitios.id')
+        ->join('neofaces', 'sitios.neoface', '=', 'neofaces.id')
+        ->where('puertas.id', '=', $idPuerta)
+        ->first()
+        ->toArray();
+
+     
+           $ip= $result['ip'];
+           $port= $result['puerto'];
+           $user= $result['usuario'];
+           $pass= $result['clave'];
+         
             $curl = curl_init();
             curl_setopt_array($curl, array(
                 CURLOPT_URL => config('constants.neofaceurl')."user/getauthtoken",
