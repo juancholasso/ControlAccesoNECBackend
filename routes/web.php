@@ -366,7 +366,7 @@ $router->post('/ws/formato/insertar', ['uses' => 'FormatoController@insertar']);
 
 //Neofaces
 $router->get('/ws/neoface/listar', ['uses' => 'NeoFaceController@listar']);
-$router->get('/ws/neoface/getauthtoken', ['uses' => 'NeoFaceController@GETAUTHTOKEN']);
+$router->get('/ws/neoface/getauthtoken/{id}', ['uses' => 'NeoFaceController@GETAUTHTOKEN']);
 
 
 // Login

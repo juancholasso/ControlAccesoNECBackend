@@ -80,6 +80,7 @@ class ControladoraController extends Controller
             'mac' => $request['mac'],
             'command_code' => $request['command_code'],
             'parameters' => $request['parameters'],
+            'parameters_salida' => $request['parameters_salida'],
             'puerta' => $request['puerta'],
             'fecha' => date("Y-m-d\Th:i:s"),
             'eliminado' => 0,
@@ -109,6 +110,7 @@ class ControladoraController extends Controller
             'mac' => $request['mac'],
             'command_code' => $request['command_code'],
             'parameters' => $request['parameters'],
+            'parameters_salida' => $request['parameters_salida'],
             'puerta' => $request['puerta'],
         );
         try {

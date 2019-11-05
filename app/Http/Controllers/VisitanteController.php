@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\NeoFaceController;
+use DB;
 
 
 class VisitanteController extends Controller
@@ -25,7 +26,7 @@ class VisitanteController extends Controller
                 ->with('usuario.tipo_documento')
                 ->where('eliminado', 0)
                 ->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -41,7 +42,7 @@ class VisitanteController extends Controller
     public function listarTodos()
     {   
         $result = Visitante::with('usuario')->with('usuario.grupo')->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -178,5 +179,34 @@ class VisitanteController extends Controller
                 config('constants.messages.2.code')
             );
         }
+    }
+
+
+    public function exportarconPermiso()
+    {
+        $result =  \DB::select('SELECT tipos_permisos.descripcion, permisos.fecha_inicial AS fecha_inicial, permisos.fecha_final AS fecha_final, usuarios.nombre AS nombre, usuarios.apellido AS apellido, usuarios.documento AS documento
+
+        FROM visitantes
+        
+        LEFT JOIN usuarios
+        ON usuarios.id = visitantes.usuario
+        
+        LEFT JOIN permisos
+        ON permisos.usuario = usuarios.id
+        
+        LEFT JOIN tipos_permisos
+        on tipos_permisos.id = permisos.tipo_permiso');
+
+        if (count($result) > 0) {
+            return response() -> json(
+              array('data' => $result, 'message' => config('constants.messages.3.message')),
+              config('constants.messages.3.code')
+            );
+          }else{
+           return response() -> json(
+          array('data' => $result, 'message' => config('constants.messages.4.message')),
+          config('constants.messages.4.code')
+          );
+         }
     }
 }

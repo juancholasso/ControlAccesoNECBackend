@@ -35,6 +35,7 @@ class SubsitioController extends Controller
      */
     public function consultar($id)
     {   
+        
         $result = Subsitio::with('sitio')->where('eliminado', 0)->where('id', $id)->with('puertas')->first();
         if ($result != null) {
             return response() -> json(

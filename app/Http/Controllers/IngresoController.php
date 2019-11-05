@@ -6,6 +6,7 @@ use App\Models\Ingreso;
 use App\Models\Permiso;
 use App\Models\Usuario;
 use App\Models\Puerta;
+use App\Models\Controladora;
 use App\Models\Sitio;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
@@ -119,6 +120,11 @@ class IngresoController extends Controller
         //Subsitio al cual quiere ingresar            
         $subsitioIngresarId = $puerta->subsitio;
 
+        $subSitio = Subsitio:: find($subsitioIngresarId);
+
+        $sitioIngresoid = $subSitio->sitio;
+
+
         //verificar si el usuario se encuentra dentro del sitio y si está autorizado en la fecha correspondiente
         $result = Permiso::
               where('entrada', 0)
@@ -163,9 +169,19 @@ class IngresoController extends Controller
                     );
                 }
 
+                //Traer infomración del neoface para traer imagen match
 
+                $idNeoface= Sitio:: where ('id', $sitioIngresoid)
+                ->pluck('neoface')
+                ->first();
+                $neoface= Neoface:: where('id', $idNeoface)->first();
+                $ip= $neoface->ip;
+                $port=$neoface->puerto;
+                $user=$neoface->usuario;
+                $pass=$neoface->clave;
+                
                 //Traer imagen del match
-                $imagenMatchB64 = $neoface->TRAER_IMAGEN_MATCH($idmatch)->data;                
+                $imagenMatchB64 = $neoface->TRAER_IMAGEN_MATCH($idmatch, $ip, $port, $user, $pass)->data;                
                 $content = base64_decode($imagenMatchB64);
                 $file = fopen(base_path().'/public/uploads/match/'.$idmatch.'.jpg', "wb");
                 fwrite($file, $content);
@@ -183,7 +199,7 @@ class IngresoController extends Controller
             
                 //Agregar ingreso
                 Ingreso::insert($data);
-                $this->emitir($usuario, true, $puerta, "Entrada", $idmatch.".jpg");
+                $this->emitir($usuario, true, $puerta, "Entrada", $idmatch.".jpg",$puertaid);
                 return response() -> json(
                     array('data' => [], 'message' => config('constants.messages.5.message')),
                     config('constants.messages.5.code')
@@ -198,36 +214,38 @@ class IngresoController extends Controller
         
     }
 	
-	public function emitir($usuario, $acceso, $puerta, $tipoIngreso, $urlImagenMatch)
+	public function emitir($usuario,$acceso,$puerta,$tipoIngreso,$urlImagenMatch,$puertaid)
     {
+        $controladora = Controladora::where('puerta', $puertaid)->where('eliminado','0')->first()->toArray();
+        
         $client = new Client(new Version2X('http://localhost:8080/'));
         $client->initialize();
         $client->emit('acceso', [
-            'usuario' => $usuario, 
-            'acceso' => $acceso,
-            'puerta' => $puerta,
-            'tipoIngreso' => $tipoIngreso,
-            'urlImagenMatch' => $urlImagenMatch,
+             'usuario' => $usuario, 
+             'acceso' => $acceso,
+             'puerta' => $puerta,
+             'tipoIngreso' => $tipoIngreso,
+             'urlImagenMatch' => $urlImagenMatch,
         ]);
-        if($acceso){
-            $client->emit('control', [
+         if($acceso){
+             $client->emit('control', [
+                 'evento' => "control",                
+                 'accion'=>"open",
+                 'commandcode'=>$controladora['command_code'],
+                 'evento'=>"control",
+                 'macaddress'=>$controladora['mac'],
+                 'parameters'=> $controladora['parameters']
+             ]);
+             $client->emit('control', [
                 'evento' => "control",                
-                'accion'=>"open",
-                'commandcode'=>"0094",
+                'accion'=>"close",
+                'commandcode'=>$controladora['command_code'],
                 'evento'=>"control",
-                'macaddress'=>"00:06:8E:41:C8:F4",
-                'parameters'=> "0;1;1;0"
+                'macaddress'=>$controladora['mac'],
+                'parameters'=> $controladora['parameters_salida']
             ]);
-            $client->emit('control', [
-                'evento' => "control",                
-                'accion'=> "open",
-                'commandcode'=> "0094",
-                'evento'=> "control",
-                'macaddress'=> "00:06:8E:41:C8:F4",
-                'parameters'=> "0;1;0;0"
-            ]);
-        }
-        $client->close();
+         }
+         $client->close();
     }
 
     /**

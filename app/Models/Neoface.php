@@ -28,4 +28,5 @@ class Neoface extends Model
       //Elementos ocultos
       protected $hidden = [
       ];
+
 }

@@ -16,7 +16,9 @@ class TurnoController extends Controller
      */
     public function listar()
     {   
-        $result = Turno::where('eliminado', 0)->get();
+        $result = Turno::where('eliminado', 0)
+
+        ->get();
         if (count($result) > 0) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
@@ -30,6 +32,23 @@ class TurnoController extends Controller
         }
     }
 
+    public function listarporGrupo()
+    {   
+        $result = Turno::where('eliminado', 0)
+        ->groupBy('descripcion')
+        ->get();
+        if (count($result) > 0) {
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.3.message')),
+                config('constants.messages.3.code')
+            );
+        }else{
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.4.message')),
+                config('constants.messages.4.code')
+            );
+        }
+    }
     /**
      *  Consultar las areas
      */

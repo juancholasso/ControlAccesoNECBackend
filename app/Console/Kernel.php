@@ -113,16 +113,16 @@ class Kernel extends ConsoleKernel
             }
         
         })->hourly();//->everyMinute();
+
         $schedule->call(function () {
             $log = new LogController;
             
              // Emitir al socket
              $client = new Client(new Version2X('http://localhost:8080/',));
              $client->initialize();
-             $client->emit('campanita',$log->not());
+             $client->emit('campanita',["data"=>$log->not()]);
              $client->close();
         })->everyMinute();
-
     }
    
 }

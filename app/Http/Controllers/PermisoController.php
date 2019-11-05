@@ -29,7 +29,7 @@ class PermisoController extends Controller
                 //->with('turnos')
                 ->with('excepciones')
                 ->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -56,7 +56,7 @@ class PermisoController extends Controller
                 ->where('usuario', $id)
                 ->where('eliminado', 0)
                 ->get();
-        if (count($result) > 0) {
+            if (!empty($result))  {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

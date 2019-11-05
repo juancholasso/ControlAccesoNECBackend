@@ -29,10 +29,5 @@ class PermisosSubsitio extends Model
       {
           return $this -> belongsTo(Permiso::class, 'permiso');
       }
-      
-      public function usuario()
-      {
-        return $this -> belongsTo(Usuario::class, 'usuario');
-      }
   
 }
