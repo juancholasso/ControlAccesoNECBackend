@@ -27,17 +27,17 @@ class UsuarioController extends Controller
                 ->where('eliminado', 0)
                 ->orderBy('id','desc')
                 ->get();
-        if (count($result) > 0) {
-            return response() -> json(
-                array('data' => $result, 'message' => config('constants.messages.3.message')),
-                config('constants.messages.3.code')
-            );
-        }else{
-            return response() -> json(
-                array('data' => $result, 'message' => config('constants.messages.4.message')),
-                config('constants.messages.4.code')
-            );
-        }
+                if (!empty($result)) {
+                    return response() -> json(
+                        array('data' => $result, 'message' => config('constants.messages.3.message')),
+                        config('constants.messages.3.code')
+                    );
+                }else{
+                    return response() -> json(
+                        array('data' => $result, 'message' => config('constants.messages.4.message')),
+                        config('constants.messages.4.code')
+                    );
+                }
     }
 
     public function listarTipoUsuario($id)

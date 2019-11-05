@@ -29,7 +29,7 @@ class FormatoController extends Controller
                 'example'=>'https://www.pdf995.com/samples/pdf.pdf'
             ),
         );
-        if ($result != null) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

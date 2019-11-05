@@ -17,7 +17,7 @@ class TipoTransporteController extends Controller
     public function listar()
     {   
         $result = TipoTransporte::where('eliminado', 0)->get();
-        if ($result != null) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

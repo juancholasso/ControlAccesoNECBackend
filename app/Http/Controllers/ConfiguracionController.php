@@ -17,7 +17,7 @@ class ConfiguracionController extends Controller
     public function listar()
     {   
         $result = Configuracion::first();
-        if ($result != null) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
