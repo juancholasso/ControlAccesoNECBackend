@@ -391,6 +391,7 @@ class IngresoController extends Controller
                         ->where('usuarios.tipo_usuario', $tipo_usuario)
                         ->where('ingresos.ingreso', '>=', $fecha_inicial)
                         ->where('ingresos.ingreso', '<=', $fecha_final)
+                        ->groupBy('ingresos.usuario')
                         ->get();
                         
             return response() -> json(
