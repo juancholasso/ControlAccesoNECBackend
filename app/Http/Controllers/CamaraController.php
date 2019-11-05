@@ -16,6 +16,8 @@ class CamaraController extends Controller
          ->join('sitios', 'subsitios.sitio', '=', 'sitios.id')
          ->join('neofaces', 'sitios.neoface', '=', 'neofaces.id')
          ->Where('neofaces.eliminado', '=', '0')
+         ->Where('subsitios.eliminado', '=', '0')
+         ->Where('sitios.eliminado', '=', '0')
          ->Where('subsitios.id', '=', $id)
          ->get();
          if (!empty($result)) {
