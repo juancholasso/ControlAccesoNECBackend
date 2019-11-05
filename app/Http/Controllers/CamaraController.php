@@ -76,7 +76,7 @@ public function listarPorNeoface($id)
             
             $response = json_decode(curl_exec($curl));
             return response() -> json(
-                array($response)
+                array('data'=> $response)
             );
 
         } catch (\Throwable $th) {
