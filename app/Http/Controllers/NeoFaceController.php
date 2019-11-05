@@ -386,7 +386,7 @@ class NeoFaceController extends Controller
     public function listar ()
     {   
         $result = Neoface::where('eliminado', 0)->get();
-        if ($result != null) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

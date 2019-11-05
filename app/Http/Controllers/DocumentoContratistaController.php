@@ -17,7 +17,7 @@ class DocumentoContratistaController extends Controller
     public function listar()
     {   
         $result = DocumentoContratista::where('eliminado', 0)->get();
-        if ($result != null) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
@@ -37,7 +37,7 @@ class DocumentoContratistaController extends Controller
     public function listarPorContratista($id)
     {   
         $result = DocumentoContratista::with('tipo')->where('eliminado', 0)->where('contratista', $id)->get();
-        if ($result != null) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

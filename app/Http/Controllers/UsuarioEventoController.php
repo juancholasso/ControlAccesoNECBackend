@@ -14,7 +14,7 @@ class UsuarioEventoController extends Controller
     public function listarPorEvento($evento)
     {   
         $result = UsuarioEvento::with('usuario')->with('usuario.tipo_usuario')->with('evento')->where('evento', $evento)->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

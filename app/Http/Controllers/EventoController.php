@@ -19,7 +19,7 @@ class EventoController extends Controller
     public function listar()
     {   
         $result = Evento::with('salon')->with('responsable')->where('eliminado', 0)->orderBy('id', 'DESC')->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

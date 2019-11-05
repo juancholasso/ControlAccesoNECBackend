@@ -17,7 +17,7 @@ class IngresoEquipoController extends Controller
     public function listar()
     {   
         $result = IngresoEquipo::with('marca')->with('estado')->with('tipo')->where('eliminado', 0)->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

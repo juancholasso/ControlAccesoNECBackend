@@ -15,7 +15,7 @@ class NominaController extends BaseController
     public function listar()
     {   
         $result = Nomina::all();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

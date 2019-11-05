@@ -19,7 +19,7 @@ class CuentaController extends Controller
     public function listar()
     {   
         $result = Cuenta::where('eliminado', 0)->with('rol')->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')
