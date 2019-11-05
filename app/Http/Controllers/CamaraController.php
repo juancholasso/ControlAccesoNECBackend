@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
@@ -64,7 +63,7 @@ public function listar()
         }
     }
 }
-=======
+
 
 namespace App\Http\Controllers;
 use App\Models\Subsitio;
@@ -100,4 +99,4 @@ class CamaraController extends Controller
 
    }
 }
->>>>>>> masterdevelopment
+
