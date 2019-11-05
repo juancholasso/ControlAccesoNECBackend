@@ -12,6 +12,9 @@ $router->get('/ws/neoface/sincronizar/{id}', ['uses' => 'NeoFaceController@SINCR
 //socket
 $router->post('/ws/socket/acceder', ['uses' => 'SocketController@acceder']);
 
+//camara
+$router->get('/ws/camara/listarporneoface/{id}', ['uses' => 'CamaraController@listarPorNeoface']);
+
 // Usuarios
 $router->get('/ws/usuario/listar', ['uses' => 'UsuarioController@listar']);
 $router->get('/ws/usuario/listartipousuario/{id}', ['uses' => 'UsuarioController@listarTipoUsuario']);

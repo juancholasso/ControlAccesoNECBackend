@@ -12,6 +12,7 @@ class Neoface extends Model
     //campos de la tabla
     protected $fillable = [
         'id',
+        'guid',
         'descripcion',
         'ip',
         'puerto',

@@ -8,6 +8,8 @@ use App\Models\Usuario;
 use App\Models\Puerta;
 use App\Models\Controladora;
 use App\Models\Sitio;
+use App\Models\Subsitio;
+use App\Models\Neoface;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -33,17 +35,17 @@ class IngresoController extends Controller
                             ->with('usuario.tipo_usuario')
                             ->with('usuario.grupo')
                             ->get();
-                            if (!empty($result)) {
-                                return response() -> json(
-                                    array('data' => $result, 'message' => config('constants.messages.3.message')),
-                                    config('constants.messages.3.code')
-                                );
-                            }else{
-                                return response() -> json(
-                                    array('data' => $result, 'message' => config('constants.messages.4.message')),
-                                    config('constants.messages.4.code')
-                                );
-                            }
+        if (!empty($result)) {
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.3.message')),
+                config('constants.messages.3.code')
+            );
+        }else{
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.4.message')),
+                config('constants.messages.4.code')
+            );
+        }
     }
 
     /**
@@ -150,7 +152,7 @@ class IngresoController extends Controller
         
          // Si el usuario se encuentra afuera
         if(!$ingresoPermitido){
-            $this->emitir($usuario, false, $puerta, "Entrada No Permitida", "");
+            $this->emitir($usuario, false, $puerta, "Entrada No Permitida", "", $puertaid);
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.8.message')),
                 config('constants.messages.8.code')
@@ -174,11 +176,11 @@ class IngresoController extends Controller
                 $idNeoface= Sitio:: where ('id', $sitioIngresoid)
                 ->pluck('neoface')
                 ->first();
-                $neoface= Neoface:: where('id', $idNeoface)->first();
-                $ip= $neoface->ip;
-                $port=$neoface->puerto;
-                $user=$neoface->usuario;
-                $pass=$neoface->clave;
+                $neoface_model = Neoface:: where('id', $idNeoface)->first();
+                $ip= $neoface_model->ip; 
+                $port=$neoface_model->puerto;
+                $user=$neoface_model->usuario;
+                $pass=$neoface_model->clave;
                 
                 //Traer imagen del match
                 $imagenMatchB64 = $neoface->TRAER_IMAGEN_MATCH($idmatch, $ip, $port, $user, $pass)->data;                
@@ -216,7 +218,7 @@ class IngresoController extends Controller
 	
 	public function emitir($usuario,$acceso,$puerta,$tipoIngreso,$urlImagenMatch,$puertaid)
     {
-        $controladora = Controladora::where('puerta', $puertaid)->where('eliminado','0')->first()->toArray();
+        $controladora = Controladora::where('puerta', $puertaid)->where('eliminado','0')->first();
         
         $client = new Client(new Version2X('http://localhost:8080/'));
         $client->initialize();
@@ -255,7 +257,6 @@ class IngresoController extends Controller
     public function actualizar($usuario, $puertaid, $fecha_actual)
     {
         $puerta = Puerta::find($puertaid);
-
         // SI el usuario ya se encuentra adentro
         $result = Permiso::
               where('entrada', 1)

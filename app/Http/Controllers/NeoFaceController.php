@@ -32,7 +32,7 @@ class NeoFaceController extends Controller
 
         $result = PermisosSubsitio::select('permiso', 'permisos.usuario AS idUsuario', 'usuarios.nombre AS nombre',
                 'subsitios.sitio AS sitio', 'sitios.neoface AS neoface',
-                'neofaces.ip AS ip', 'neofaces.puerto AS puerto' , 'neofaces.usuario as usuario', 'neofaces.clave as clave'
+                'neofaces.guid AS GUID','neofaces.ip AS ip', 'neofaces.puerto AS puerto' , 'neofaces.usuario as usuario', 'neofaces.clave as clave'
             )
                 ->from('permisos_subsitio')
                 ->join('permisos', 'permisos_subsitio.permiso', '=', 'permisos.id')
@@ -41,26 +41,26 @@ class NeoFaceController extends Controller
                 ->join('sitios', 'subsitios.sitio', '=', 'sitios.id')
                 ->join('neofaces', 'sitios.neoface', '=', 'neofaces.id')
                 ->where('usuarios.id', '=', $id)
+                ->where('permisos.eliminado', '=', 0)
                 ->get()
                 ->toArray();
-
+                
         foreach ($result as $permiso ) {
+            $watchListId= $permiso['GUID'];
             $ip = $permiso['ip'];
             $port=$permiso['puerto'];
             $user=$permiso['usuario'];
             $pass=$permiso['clave'];
    
-          
             $sync = new NeoFaceController();
       
             // Si la sincronización fue exitosa se actualiza el estado en neoface
-        
             $consulta = $sync -> CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass);
             
             if($consulta == true)
             { 
             
-                 $edicion = $sync->EDITAR_USUARIO($usuario, $ip, $port, $user, $pass);
+                 $edicion = $sync->EDITAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass);
                 
                 // Si la edición del usuario fue exitosa
                 if($edicion == true)
@@ -91,7 +91,7 @@ class NeoFaceController extends Controller
                 } 
             }else{
                 
-                $agregado = $sync -> AGREGAR_USUARIO($usuario, $ip, $port, $user, $pass);
+                $agregado = $sync -> AGREGAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass);
                 $agregadoTodos = 0;
                 if($agregado == true)
                 {
@@ -160,10 +160,6 @@ class NeoFaceController extends Controller
             
             $response = curl_exec($curl);
             
-         
-            // $statuscode =  curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            // echo curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            // exit();
             if(curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200)
                 return true;
             else  
@@ -177,7 +173,7 @@ class NeoFaceController extends Controller
     /**
      *  Agregar un usuario en neoface
      */
-    public function AGREGAR_USUARIO($usuario, $ip, $port, $user, $pass)
+    public function AGREGAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass)
     {
 
         try {
@@ -186,7 +182,6 @@ class NeoFaceController extends Controller
             $imgurl = config('constants.profilepicurl') . $usuario['foto'];
             
             $neofaceurl = config('constants.neofaceurl') . 'user/enrol';
-            
             
             $request = $client->post($neofaceurl, [
                 'multipart' => [
@@ -197,7 +192,7 @@ class NeoFaceController extends Controller
                 ],
                 'query' => [
                     'Guid' => $usuario['guid'],
-                    'WatchlistId' => $usuario['grupo']['guid'],
+                    'WatchlistId' => $watchListId,
                     'FirstName' => $usuario['nombre'],
                     'LastName' => $usuario['apellido'],
                     'MiddleName' => '',
@@ -233,7 +228,7 @@ class NeoFaceController extends Controller
     /**
      *  Editar informacion de usuario en neoface
      */
-    public function EDITAR_USUARIO($usuario, $ip, $port, $user, $pass)
+    public function EDITAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass)
     {
         try {
             // Enviar informacion a NEOFACE
@@ -242,7 +237,7 @@ class NeoFaceController extends Controller
             $request = $client->put($neofaceurl, [
                 'query' => [
                     'Guid' => $usuario['guid'],
-                    'WatchlistId' => $usuario['grupo']['guid'],
+                    'WatchlistId' =>  $watchListId,
                     'FirstName' => $usuario['nombre'],
                     'LastName' => $usuario['apellido'],
                     'MiddleName' => '',

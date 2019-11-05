@@ -75,7 +75,7 @@ class PuertaController extends Controller
     public function insertar(Request $request)
     {
         $data = array(
-            'guid' => GUID(),
+            'guid' => $request['guid'],
             'descripcion' => $request['descripcion'],
             'subsitio' => $request['subsitio'],
             'tipo_puerta' => $request['tipo_puerta'],
