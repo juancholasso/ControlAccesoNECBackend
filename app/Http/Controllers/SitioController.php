@@ -17,7 +17,7 @@ class SitioController extends Controller
         $result = Sitio::where('eliminado', 0)->with('controles_acceso')
         ->with('subsitios')
         ->get();
-        if (count($result) > 0) {
+        if (!empty($result)) {
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.3.message')),
                 config('constants.messages.3.code')

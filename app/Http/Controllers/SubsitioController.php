@@ -15,19 +15,19 @@ class SubsitioController extends Controller
     public function listar()
     {   
         $result = Subsitio::with('sitio')
-	->where('eliminado', 0)->get();
-                
-        if (count($result) > 0) {
-            return response() -> json(
-                array('data' => $result, 'message' => config('constants.messages.3.message')),
-                config('constants.messages.3.code')
-            );
-        }else{
-            return response() -> json(
-                array('data' => $result, 'message' => config('constants.messages.4.message')),
-                config('constants.messages.4.code')
-            );
-        }
+    ->where('eliminado', 0)->get();
+    
+    if (!empty($result)) {
+        return response() -> json(
+            array('data' => $result, 'message' => config('constants.messages.3.message')),
+            config('constants.messages.3.code')
+        );
+    }else{
+        return response() -> json(
+            array('data' => $result, 'message' => config('constants.messages.4.message')),
+            config('constants.messages.4.code')
+        );
+    }
     }
 
     /**
