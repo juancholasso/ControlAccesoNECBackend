@@ -274,6 +274,7 @@ $router->delete('/ws/controlacceso/eliminar/{id}',['uses' => 'ControlAccesoContr
 
 //Turnos
 $router->get('/ws/turno/listar',['uses' => 'TurnoController@listar']);
+$router->get('/ws/turno/listarporgrupo',['uses' => 'TurnoController@listarporGrupo']);
 $router->get('/ws/turno/consultar/{id}',['uses' => 'TurnoController@consultar']);
 $router->post('/ws/turno/insertar',['uses' => 'TurnoController@insertar']);
 $router->put('/ws/turno/actualizar',['uses' => 'TurnoController@actualizar']);
