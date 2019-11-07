@@ -162,6 +162,7 @@ $router->delete('/ws/empleado/eliminar/{id}',['uses' => 'EmpleadoController@elim
 
 //visitantes
 $router->get('/ws/visitante/listar',['uses' => 'VisitanteController@listar']);
+$router->get('/ws/visitante/exportarxpermiso',['uses' => 'VisitanteController@exportarconPermiso']);
 $router->get('/ws/visitante/listartodos',['uses' => 'VisitanteController@listarTodos']);
 $router->get('/ws/visitante/consultar/{id}',['uses' => 'VisitanteController@consultar']);
 $router->get('/ws/visitante/consultarxusuario/{id}',['uses' => 'VisitanteController@consultarPorUsuario']);
