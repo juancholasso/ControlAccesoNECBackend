@@ -55,6 +55,7 @@ class ControlAccesoController extends Controller
     public function insertar(Request $request)
     {
         $data = array(
+            'guid' => $request['guid'],
             'descripcion' => $request['descripcion'],
             'ip' => $request['ip'],
             'puerto' => $request['puerto'],
@@ -83,6 +84,7 @@ class ControlAccesoController extends Controller
     {
         $id = $request['id'];
         $data = array(
+            'guid' => $request['guid'],
             'descripcion' => $request['descripcion'],
             'ip' => $request['ip'],
             'puerto' => $request['puerto'],

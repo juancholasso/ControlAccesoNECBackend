@@ -171,21 +171,88 @@ class PermisoController extends Controller
      */
     public function eliminar($id)
     {
-        $data = array(
-            'eliminado' => 1,
-        );
-        try {
-            Permiso::findOrFail($id) -> update($data);
-            return response() -> json(
-                array('data' => [], 'message' => config('constants.messages.7.message')),
-                config('constants.messages.7.code')
-            );
-        } catch (ModelNotFoundException $e) {
-            return response() -> json(
-                array('data' => [], 'message' => config('constants.messages.2.message')),
-                config('constants.messages.2.code')
-            );
+        $result = PermisosSubsitio::select('*', 'neofaces.usuario as neou')
+        ->from('permisos_subsitio')
+        ->join('subsitios', 'permisos_subsitio.subsitio', '=', 'subsitios.id')
+        ->join('sitios', 'subsitios.sitio', '=', 'sitios.id')
+        ->join('neofaces', 'sitios.neoface', '=', 'neofaces.id')
+        ->join('permisos', 'permisos_subsitio.permiso', '=', 'permisos.id')
+        ->join('usuarios', 'permisos.usuario', '=', 'usuarios.id')
+        ->where('permisos.id', '=', $id)
+        ->get()
+        ->toArray();
+        $idusuario = $result[0]['id'];
+        $guid = $result[0]['guid'];
+        $ip = $result[0]['ip'];
+        $port = $result[0]['puerto'];
+        $user = $result[0]['neou'];
+        $pass = $result[0]['clave'];
+
+        $usuario = Usuario::where('guid', $guid)->first();
+     
+        $result2 = PermisosSubsitio::select('*')
+        ->from('permisos_subsitio')
+        ->join('subsitios', 'permisos_subsitio.subsitio', '=', 'subsitios.id')
+        ->join('sitios', 'subsitios.sitio', '=', 'sitios.id')
+        ->join('neofaces', 'sitios.neoface', '=', 'neofaces.id')
+        ->join('permisos', 'permisos_subsitio.permiso', '=', 'permisos.id')
+        ->join('usuarios', 'permisos.usuario', '=', 'usuarios.id')
+        ->where('usuarios.id', '=', $idusuario)
+        ->where ('permisos.id', '<>' ,$id)    
+        ->get()
+        ->toArray();
+
+        $permisosUSuarioTotal = array();
+        foreach ($result2 as $i => $permiso) {
+          $ip = $result2[$i]['descripcion'];
+          array_push($permisosUSuarioTotal, $ip);
         }
+
+        $permisosUSuario = array();
+        foreach ($result as $i => $permiso) {
+          $ip = $result[$i]['descripcion'];
+          array_push($permisosUSuario, $ip);
+        }
+
+        $resultado = array_diff($permisosUSuario, $permisosUSuarioTotal);
+
+        if($resultado == null){
+            try {
+                $data = array(
+                    'eliminado' => 1,
+                );
+                Permiso::findOrFail($id) -> update($data);
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.7.message')),
+                    config('constants.messages.7.code')
+                );
+            } catch (ModelNotFoundException $e) {
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.2.message')),
+                    config('constants.messages.2.code')
+                );
+            }
+        }else{
+
+            $sync = new NeoFaceController;
+            $desonrolar = $sync -> ELIMINAR_USUARIO_NEOFACES($usuario, $ip, $port, $user, $pass);  
+            try {
+                $data = array(
+                    'eliminado' => 1,
+                );
+                Permiso::findOrFail($id) -> update($data);
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.7.message')),
+                    config('constants.messages.7.code')
+                );
+            } catch (ModelNotFoundException $e) {
+                return response() -> json(
+                    array('data' => [], 'message' => config('constants.messages.2.message')),
+                    config('constants.messages.2.code')
+                );
+            }
+        }
+      
     }
 
     /**

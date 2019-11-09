@@ -162,6 +162,7 @@ $router->delete('/ws/empleado/eliminar/{id}',['uses' => 'EmpleadoController@elim
 
 //visitantes
 $router->get('/ws/visitante/listar',['uses' => 'VisitanteController@listar']);
+$router->get('/ws/visitante/exportarxpermiso',['uses' => 'VisitanteController@exportarconPermiso']);
 $router->get('/ws/visitante/listartodos',['uses' => 'VisitanteController@listarTodos']);
 $router->get('/ws/visitante/consultar/{id}',['uses' => 'VisitanteController@consultar']);
 $router->get('/ws/visitante/consultarxusuario/{id}',['uses' => 'VisitanteController@consultarPorUsuario']);
@@ -274,6 +275,7 @@ $router->delete('/ws/controlacceso/eliminar/{id}',['uses' => 'ControlAccesoContr
 
 //Turnos
 $router->get('/ws/turno/listar',['uses' => 'TurnoController@listar']);
+$router->get('/ws/turno/listarporgrupo',['uses' => 'TurnoController@listarporGrupo']);
 $router->get('/ws/turno/consultar/{id}',['uses' => 'TurnoController@consultar']);
 $router->post('/ws/turno/insertar',['uses' => 'TurnoController@insertar']);
 $router->put('/ws/turno/actualizar',['uses' => 'TurnoController@actualizar']);
