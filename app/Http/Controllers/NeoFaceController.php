@@ -44,81 +44,82 @@ class NeoFaceController extends Controller
                 ->where('permisos.eliminado', '=', 0)
                 ->get()
                 ->toArray();
-                
+            $usuarioSincronizado= array();  
         foreach ($result as $permiso ) {
             $watchListId= $permiso['GUID'];
             $ip = $permiso['ip'];
             $port=$permiso['puerto'];
             $user=$permiso['usuario'];
             $pass=$permiso['clave'];
-   
+            
             $sync = new NeoFaceController();
       
             // Si la sincronización fue exitosa se actualiza el estado en neoface
             $consulta = $sync -> CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass);
-            
+           
             if($consulta == true)
-            { 
-            
+            {        
                  $edicion = $sync->EDITAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass);
-                
+                 
                 // Si la edición del usuario fue exitosa
                 if($edicion == true)
                 {
+                    
                     // Se procede a actualizar la foto
                     // Si la actualización de la foto fue exitosa
-                    $foto = $sync -> ACTUALIZAR_FOTO($usuario);
+                    $foto = $sync -> ACTUALIZAR_FOTO($usuario, $ip, $port, $user, $pass);
+                    
                     if($foto == true)
                     {
-                        return response() -> json(
+                        /* return response() -> json(
                             array('data' => [], 'message' => config('constants.messages.12.message')),
                             config('constants.messages.12.code')
-                        );
+                        ); */
                     }else{
-                        return response() -> json(
+                       /*  return response() -> json(
                             array('data' => [], 'message' => config('constants.messages.14.message')),
                             config('constants.messages.14.code')
-                        );
+                        ); */
                     }
+                    array_push($usuarioSincronizado , "1"); 
                 }else{
                     
-                    $data = array('neoface'  =>  0);
+                 /*    $data = array('neoface'  =>  0);
                     Usuario::where('id', $id)->update($data);
                     return response() -> json(
                         array('data' => [], 'message' => config('constants.messages.2.message')),
                         config('constants.messages.2.code')
-                    ); 
+                    );  */
                 } 
             }else{
                 
                 $agregado = $sync -> AGREGAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass);
-                $agregadoTodos = 0;
+                
+               
                 if($agregado == true)
                 {
-                    $agregadoTodos++;
+                    array_push($usuarioSincronizado , "1"); 
                 }
             }    
         } 
 
-         if($agregadoTodos == true)
-        {
-        
+        foreach ($usuarioSincronizado as $neoface) {
+          
+           if ($neoface == 0)
+           {
+               echo "Fallo sincronización en un neoface o mas, revise por favor";
+           }
+           else{
             $data = array('neoface'  =>  1);
             Usuario::where('id', $id)->update($data);
             return response() -> json(
-                array('data' => [], 'message' => config('constants.messages.5.message')),
-                config('constants.messages.5.code')
+                array('data' => [], 'message' => config('constants.messages.12.message')),
+                config('constants.messages.12.code')
             );
-        }else{
-        
-
-            $data = array('neoface'  =>  0);
-            Usuario::where('id', $id)->update($data);
-            return response() -> json(
-                array('data' => [], 'message' => config('constants.messages.2.message')),
-                config('constants.messages.2.code')
-            );
+           }
         }
+        
+        
     }
 
 
@@ -127,7 +128,7 @@ class NeoFaceController extends Controller
      */
     public function CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass)
     {
-        
+      
         try {
             // Consultar información désde neoface
             $client = new Client();
@@ -175,14 +176,13 @@ class NeoFaceController extends Controller
      */
     public function AGREGAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass)
     {
-
         try {
             // Enviar informacion a NEOFACE
             $client = new Client();
             $imgurl = config('constants.profilepicurl') . $usuario['foto'];
-            
+           
             $neofaceurl = config('constants.neofaceurl') . 'user/enrol';
-            
+         
             $request = $client->post($neofaceurl, [
                 'multipart' => [
                     [
@@ -204,12 +204,10 @@ class NeoFaceController extends Controller
                     'pass' => $pass
                 ]
             ]);
-              
-           
+            
             // Obtener respuesta
             $response = $request->getBody();
             $statusCode = $request->getStatusCode();
-            
             if($statusCode == 201)
             {
                 // Enrolamiento exitoso
@@ -230,6 +228,8 @@ class NeoFaceController extends Controller
      */
     public function EDITAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass)
     {
+
+       
         try {
             // Enviar informacion a NEOFACE
             $client = new Client();
@@ -250,11 +250,13 @@ class NeoFaceController extends Controller
                 ]
             ]);
 
+         
             // Obtener respuesta
             $response = $request->getBody();    
+           
             $statusCode = $request->getStatusCode();
-
-            if($statusCode == 200)
+          
+            if($statusCode == 201)
             {
                 return true;
             }else{
@@ -297,10 +299,9 @@ class NeoFaceController extends Controller
 
                 $eliminado = $sync -> ELIMINAR_USUARIO_NEOFACES($usuario, $ip, $port, $user, $pass);
                 
-                return $eliminado;
-                
-                    
                 }
+            
+            return $eliminado;
     }
     
 
@@ -336,13 +337,17 @@ class NeoFaceController extends Controller
     }
     
 
-    public static function ACTUALIZAR_FOTO($usuario)
+    public static function ACTUALIZAR_FOTO($usuario, $ip, $port, $user, $pass)
     {
+
+        
         try {
             // Enviar informacion a NEOFACE
             $client = new Client();
             $imgurl = config('constants.profilepicurl') . $usuario['foto'];
+         
             $neofaceurl = config('constants.neofaceurl') . 'user/updatephoto';
+           
             $request = $client->post($neofaceurl, [
                 'multipart' => [
                     [
@@ -359,11 +364,11 @@ class NeoFaceController extends Controller
                 ],
                 
             ]);
-
             // Obtener respuesta
             $response = $request->getBody();
+           
             $statusCode = $request->getStatusCode();
-
+            
             if($statusCode == 201)
             {
                 // Foto actualizada exitosamente 
