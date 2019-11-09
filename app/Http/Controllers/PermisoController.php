@@ -222,8 +222,9 @@ class PermisoController extends Controller
                     'eliminado' => 1,
                 );
                 Permiso::findOrFail($id) -> update($data);
+                $message = "permiso";
                 return response() -> json(
-                    array('data' => [], 'message' => config('constants.messages.7.message')),
+                    array('data' => [$message], 'message' => config('constants.messages.7.message')),
                     config('constants.messages.7.code')
                 );
             } catch (ModelNotFoundException $e) {
@@ -241,8 +242,9 @@ class PermisoController extends Controller
                     'eliminado' => 1,
                 );
                 Permiso::findOrFail($id) -> update($data);
+                $message = "usuario";
                 return response() -> json(
-                    array('data' => [], 'message' => config('constants.messages.7.message')),
+                    array('data' => [$message], 'message' => config('constants.messages.7.message')),
                     config('constants.messages.7.code')
                 );
             } catch (ModelNotFoundException $e) {
