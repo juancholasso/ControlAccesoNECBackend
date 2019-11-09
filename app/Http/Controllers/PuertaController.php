@@ -103,6 +103,7 @@ class PuertaController extends Controller
     {
         $id = $request['id'];
         $data = array(
+            'guid' => $request['guid'],
             'descripcion' => $request['descripcion'],
             'subsitio' => $request['subsitio'],
             'tipo_puerta' => $request['tipo_puerta'],
