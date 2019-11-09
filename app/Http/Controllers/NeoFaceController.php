@@ -107,7 +107,12 @@ class NeoFaceController extends Controller
           
            if ($neoface == 0)
            {
-               echo "Fallo sincronización en un neoface o mas, revise por favor";
+            $data = array('neoface'  =>  0);
+            Usuario::where('id', $id)->update($data);
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.13.message')),
+                config('constants.messages.13.code')
+            );
            }
            else{
             $data = array('neoface'  =>  1);

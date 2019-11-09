@@ -2,7 +2,7 @@
 
 return [
     'neofaceurl' => 'http://localhost/neofacews/public/index.php/ws/',
-    'profilepicurl' => 'http://localhost/controlback/public/uploads/profile/',
+    'profilepicurl' => 'http://localhost/controlaccesonecbackend/public/uploads/profile/',
     'messages' => [
         '1' => [
             'code' => 500,
@@ -54,7 +54,7 @@ return [
         ],
         '13' => [
             'code' => 400,
-            'message' => "Ha ocurrido un error con la comunicación en NEOFACE"
+            'message' => "Ha ocurrido un error con la comunicación en alguno de los NEOFACE"
         ],
         '14' => [
             'code' => 201,
