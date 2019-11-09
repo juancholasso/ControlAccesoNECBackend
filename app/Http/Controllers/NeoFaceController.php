@@ -51,12 +51,12 @@ class NeoFaceController extends Controller
             $port=$permiso['puerto'];
             $user=$permiso['usuario'];
             $pass=$permiso['clave'];
-            
+        
             $sync = new NeoFaceController();
       
             // Si la sincronización fue exitosa se actualiza el estado en neoface
             $consulta = $sync -> CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass);
-           
+ 
             if($consulta == true)
             {        
                  $edicion = $sync->EDITAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass);
@@ -95,7 +95,6 @@ class NeoFaceController extends Controller
                 
                 $agregado = $sync -> AGREGAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass);
                 
-               
                 if($agregado == true)
                 {
                     array_push($usuarioSincronizado , "1"); 
@@ -103,9 +102,14 @@ class NeoFaceController extends Controller
             }    
         } 
 
+        $noSincronizo= false;
         foreach ($usuarioSincronizado as $neoface) {
           
            if ($neoface == 0)
+           {
+            $noSincronizo =true;
+           }
+           if($noSincronizo == true)
            {
             $data = array('neoface'  =>  0);
             Usuario::where('id', $id)->update($data);
