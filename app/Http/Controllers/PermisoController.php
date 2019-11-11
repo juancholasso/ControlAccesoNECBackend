@@ -181,6 +181,8 @@ class PermisoController extends Controller
         ->where('permisos.id', '=', $id)
         ->get()
         ->toArray();
+
+      
         $idusuario = $result[0]['id'];
         $guid = $result[0]['guid'];
         $ip = $result[0]['ip'];
@@ -204,18 +206,18 @@ class PermisoController extends Controller
 
         $permisosUSuarioTotal = array();
         foreach ($result2 as $i => $permiso) {
-          $ip = $result2[$i]['descripcion'];
+          $ip = $result2[$i]['ip'];
           array_push($permisosUSuarioTotal, $ip);
         }
 
         $permisosUSuario = array();
         foreach ($result as $i => $permiso) {
-          $ip = $result[$i]['descripcion'];
+          $ip = $result[$i]['ip'];
           array_push($permisosUSuario, $ip);
         }
 
         $resultado = array_diff($permisosUSuario, $permisosUSuarioTotal);
-
+        
         if($resultado == null){
             try {
                 $data = array(
@@ -234,8 +236,9 @@ class PermisoController extends Controller
                 );
             }
         }else{
-
+           
             $sync = new NeoFaceController;
+
             $desonrolar = $sync -> ELIMINAR_USUARIO_NEOFACES($usuario, $ip, $port, $user, $pass);  
             try {
                 $data = array(
