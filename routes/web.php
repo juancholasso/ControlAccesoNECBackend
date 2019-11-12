@@ -392,3 +392,6 @@ $router->post('/ws/log/insertar', ['uses' => 'LogController@insertar']);
 
 //camara
 $router->get('/ws/camara/consultar/{id}', ['uses' => 'CamaraController@consultar']);
+
+//Rutas Integración Kactus
+$router->get('/ws/integracionkactus', ['uses' => 'ExampleController@integracionKactus']);
