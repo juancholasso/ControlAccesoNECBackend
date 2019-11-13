@@ -2,7 +2,7 @@
 
 return [
     'neofaceurl' => 'http://localhost/neofacews/public/index.php/ws/',
-    'profilepicurl' => 'http://localhost/controlaccesonecbackend/public/uploads/profile/',
+    'profilepicurl' => 'http://localhost/controlback/public/uploads/profile/',
     'messages' => [
         '1' => [
             'code' => 500,

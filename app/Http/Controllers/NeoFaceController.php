@@ -56,7 +56,7 @@ class NeoFaceController extends Controller
       
             // Si la sincronización fue exitosa se actualiza el estado en neoface
             $consulta = $sync -> CONSULTAR_USUARIO($guid, $ip, $port, $user, $pass);
- 
+          
             if($consulta == true)
             {        
                  $edicion = $sync->EDITAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass);
@@ -185,6 +185,7 @@ class NeoFaceController extends Controller
      */
     public function AGREGAR_USUARIO($usuario, $watchListId, $ip, $port, $user, $pass)
     {
+       
         try {
             // Enviar informacion a NEOFACE
             $client = new Client();
@@ -213,10 +214,11 @@ class NeoFaceController extends Controller
                     'pass' => $pass
                 ]
             ]);
-            
+           
             // Obtener respuesta
             $response = $request->getBody();
             $statusCode = $request->getStatusCode();
+            
             if($statusCode == 201)
             {
                 // Enrolamiento exitoso
