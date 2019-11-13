@@ -102,8 +102,8 @@ class PermisoController extends Controller
     public function insertar(Request $request)
     {
         $tipo_permiso= $request['tipo_permiso'];
-
-        if ($tipo_permiso != 1)
+        $fecha_final = $request['fecha_final'];
+        if ($tipo_permiso != 1 || $fecha_final)
         { 
           
             $new_permiso = new Permiso();
@@ -114,17 +114,18 @@ class PermisoController extends Controller
             $new_permiso->fecha_final = $request['fecha_final'];
             $new_permiso->tipo_permiso = $request['tipo_permiso'];
         }else{
-
+           
             $new_permiso = new Permiso();
             $new_permiso->usuario = $request['usuario'];
             $new_permiso->entrada = 0;
 	        $new_permiso->eliminado = 0;
             $new_permiso->fecha_inicial = $request['fecha_inicial'];
-            $new_permiso->fecha_final = $request['0000-00-00 00:00:00'];
+            $new_permiso->fecha_final = '0000-00-00 00:00:00';
             $new_permiso->tipo_permiso = $request['tipo_permiso'];
-
+           
         }
         
+     
         try{
             $new_permiso->save();
             $id_permiso = $new_permiso->id;
