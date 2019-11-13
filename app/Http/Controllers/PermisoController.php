@@ -101,23 +101,34 @@ class PermisoController extends Controller
      */
     public function insertar(Request $request)
     {
-        try {
+        $tipo_permiso= $request['tipo_permiso'];
+
+        if ($tipo_permiso != 1)
+        { 
+          
             $new_permiso = new Permiso();
             $new_permiso->usuario = $request['usuario'];
             $new_permiso->entrada = 0;
-	    $new_permiso->eliminado = 0;
+	        $new_permiso->eliminado = 0;
             $new_permiso->fecha_inicial = $request['fecha_inicial'];
             $new_permiso->fecha_final = $request['fecha_final'];
             $new_permiso->tipo_permiso = $request['tipo_permiso'];
+        }else{
 
-            // $permiso = Permiso::insert($data);
-            // print_r($permiso);
+            $new_permiso = new Permiso();
+            $new_permiso->usuario = $request['usuario'];
+            $new_permiso->entrada = 0;
+	        $new_permiso->eliminado = 0;
+            $new_permiso->fecha_inicial = $request['fecha_inicial'];
+            $new_permiso->fecha_final = $request['0000-00-00 00:00:00'];
+            $new_permiso->tipo_permiso = $request['tipo_permiso'];
+
+        }
+        
+        try{
             $new_permiso->save();
             $id_permiso = $new_permiso->id;
 
-            // echo $id_permiso;
-
-            // exit();
             return response() -> json(
                 array('data' => ["newid"=>$id_permiso], 'message' => config('constants.messages.5.message')),
                 config('constants.messages.5.code')
