@@ -120,12 +120,11 @@ class PermisoController extends Controller
             $new_permiso->entrada = 0;
 	        $new_permiso->eliminado = 0;
             $new_permiso->fecha_inicial = $request['fecha_inicial'];
-            $new_permiso->fecha_final = '0000-00-00 00:00:00';
+            $new_permiso->fecha_final = '4444-01-01 00:00:00';
             $new_permiso->tipo_permiso = $request['tipo_permiso'];
            
         }
         
-     
         try{
             $new_permiso->save();
             $id_permiso = $new_permiso->id;
