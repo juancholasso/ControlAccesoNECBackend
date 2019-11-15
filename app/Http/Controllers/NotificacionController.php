@@ -51,13 +51,14 @@ class NotificacionController extends Controller
     /**
      *  Agregar una nueva marca de equipo
      */
-    public function insertar(Request $request)
+    public function insertar($usuarios_supera_horas_limite)
     {
         $data = array(
-            'tipo_notificacion' => $request['tipo_notificacion'],
-            'notificacion'=> $request['notificacion'],
-            'fecha_creado'=> $request['fecha_creado'],
-            'eliminado'=> 0
+            'horas_sin_salir' => $usuarios_supera_horas_limite['horas_sin_salir'],
+            'idUsuario'=> $usuarios_supera_horas_limite['id'],
+            'nomUsuario'=> $usuarios_supera_horas_limite['nombre'],
+            'apeUsuario'=> $usuarios_supera_horas_limite['apellido'],
+            'eliminado' => 0
         );
         try {
             $Notificacion = Notificacion::insert($data);
@@ -80,10 +81,11 @@ class NotificacionController extends Controller
     {
         $id = $request['id'];
         $data = array(
-            'tipo_notificacion'=> $request['tipo_notificacion'],
-            'notificacion'=> $request['notificacion'],
-            'fecha_creado'=> $request['fecha_creado'],
-            'eliminado'=> 0 
+            'horas_sin_salir' => $request['horas_sin_salir'],
+            'idUsuario'=> $request['idUsuario'],
+            'nomusuario'=> $request['nomusuario'],
+            'apeUsuario'=> $request['apeUsuario'],
+            'eliminado' => 0
         );
         try {
             $Notificacion = Notificacion::findOrFail($id) -> update($data);

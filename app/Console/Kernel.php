@@ -8,6 +8,7 @@ use App\Models\Permiso;
 use App\Models\Usuario;
 use App\Http\Controllers\NeoFaceController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\NotificacionController;
 use Illuminate\Support\Facades\DB;
 use ElephantIO\Client;
 use ElephantIO\Engine\SocketIO\Version2X;
@@ -60,6 +61,10 @@ class Kernel extends ConsoleKernel
                     $usuario_temp['apellido'] = $usuario->apellido;
 
                     array_push($usuarios_supera_horas_limite, $usuario_temp);
+
+                    $Notificacion = new NotificacionController;
+
+                    $Notificacion->insertar(usuarios_supera_horas_limite);
                 }
             }
 
