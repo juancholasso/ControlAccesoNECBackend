@@ -147,6 +147,8 @@ class UsuarioEventoController extends Controller
         $cedulas = array();
         $filevar = "archivo";
         $noExistente = array();
+        $CedulasRepetidas = array();
+        $evento = $request['evento'];
         if ($request->file($filevar)->isValid()) 
         {
             $file = $request -> file($filevar);
@@ -165,20 +167,28 @@ class UsuarioEventoController extends Controller
 
         foreach($cedulas as $cedula)
         {
-            $result = Usuario::where('documento', $cedula)->first();
-            $data = array(
-                'usuario' => $result['id'],
-                'evento' => $request['evento'],
-                'eliminado' => 0
-            );
-            if(!empty($result)){
-                $usuariosEvento = UsuarioEvento::insert($data);
-            }else{
-                array_push($noExistente, $cedula);
-            } 
-        }
-        return response()-> json(
-            array('data' => $noExistente));
-    }
+            $usuario = Usuario::where('documento', $cedula)->first();
+            $idUsuario= $usuario['id'];
+                $data = array(
+                    'usuario' => $usuario['id'],
+                    'evento' => $request['evento'],
+                    'eliminado' => 0
+                );
+                if(!empty($usuario)){
 
-}
+                    $validacion = UsuarioEvento::where('usuario', $idUsuario)->where('evento', $evento)->first();
+                    if(empty($validacion)){
+                    $usuariosEvento = UsuarioEvento::insert($data);
+                    }else{
+                        array_push($CedulasRepetidas, $validacion);
+                        print_r($CedulasRepetidas);
+                    }
+                }else{
+                     array_push($noExistente, $cedula);
+                     print_r($noExistente);
+                }
+            }
+            return response()-> json(
+                array('data' => $noExistente));
+            }            
+    }
