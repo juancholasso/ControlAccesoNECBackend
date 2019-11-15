@@ -175,20 +175,22 @@ class UsuarioEventoController extends Controller
                     'eliminado' => 0
                 );
                 if(!empty($usuario)){
-
                     $validacion = UsuarioEvento::where('usuario', $idUsuario)->where('evento', $evento)->first();
-                    if(empty($validacion)){
+                   
+                    if(empty($validacion))
+                    {
                     $usuariosEvento = UsuarioEvento::insert($data);
                     }else{
-                        array_push($CedulasRepetidas, $validacion);
-                        print_r($CedulasRepetidas);
+                        array_push($CedulasRepetidas, $cedula);
+                      
                     }
                 }else{
                      array_push($noExistente, $cedula);
-                     print_r($noExistente);
+                 
                 }
             }
             return response()-> json(
-                array('data' => $noExistente));
+                array('data' => $noExistente,
+                'data2'=> $CedulasRepetidas));
             }            
     }
