@@ -196,6 +196,7 @@ class IngresoController extends Controller
                     'puerta' => $puertaid,
                     'usuario' => $usuario['id'],
                     'fotousuario' => $idmatch.".jpg",
+                    'kactus' => 0,
                     'eliminado' => 0
                 );
             
