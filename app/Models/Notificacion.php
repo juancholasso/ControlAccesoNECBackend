@@ -13,9 +13,7 @@ class Notificacion extends Model
     protected $fillable = [
         'id',
         'horas_sin_salir',
-        'idUsuario',
-        'nomUsuario',
-        'apeUsuario',
+        'usuario',
         'eliminado'
     ];
       //Llave primaria
@@ -26,4 +24,10 @@ class Notificacion extends Model
       //Elementos ocultos
       protected $hidden = [
       ];
+
+
+      public function usuario()
+      {
+          return $this -> belongsTo(Usuario::class, 'usuario');
+      }
 }

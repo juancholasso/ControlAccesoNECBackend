@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 use App\Models\Permiso;
 use App\Models\Usuario;
+use App\Models\Notificacion;
 use App\Http\Controllers\NeoFaceController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\NotificacionController;
@@ -62,9 +63,13 @@ class Kernel extends ConsoleKernel
 
                     array_push($usuarios_supera_horas_limite, $usuario_temp);
 
-                    $Notificacion = new NotificacionController;
+                    $data = array(
+                        'horas_sin_salir' => $usuario_temp['horas_sin_salir'],
+                        'Usuario'=> $usuario_temp['id'],
+                        'eliminado' => 0
+                    );
+                    $Notificacion = Notificacion::insert($data);
 
-                    $Notificacion->insertar(usuarios_supera_horas_limite);
                 }
             }
 
@@ -120,12 +125,12 @@ class Kernel extends ConsoleKernel
         })->hourly();//->everyMinute();
 
         $schedule->call(function () {
-            $log = new LogController;
+            $Notificacion = new NotificacionController;
             
              // Emitir al socket
              $client = new Client(new Version2X('http://localhost:8080/',));
              $client->initialize();
-             $client->emit('campanita',["data"=>$log->not()]);
+             $client->emit('campanita',["data"=>$Notificacion->listar()]);
              $client->close();
         })->everyMinute();
     }

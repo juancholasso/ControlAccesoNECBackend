@@ -17,18 +17,12 @@ class NotificacionController extends Controller
      */
     public function listar()
     {   
-        $result = Notificacion::all();
-        if (!empty($result)) {
-            return response() -> json(
-                array('data' => $result, 'message' => config('constants.messages.3.message')),
-                config('constants.messages.3.code')
-            );
-        }else{
-            return response() -> json(
-                array('data' => $result, 'message' => config('constants.messages.4.message')),
-                config('constants.messages.4.code')
-            );
-        }
+        $result = Notificacion::with('usuario')            
+        ->skip(0)
+        ->take(15)
+        ->orderBy('id','desc')
+        ->get();
+        return array(json_encode($result));
     }
     /**
      *  Consultar las marcas de los equipos
@@ -55,9 +49,7 @@ class NotificacionController extends Controller
     {
         $data = array(
             'horas_sin_salir' => $usuarios_supera_horas_limite['horas_sin_salir'],
-            'idUsuario'=> $usuarios_supera_horas_limite['id'],
-            'nomUsuario'=> $usuarios_supera_horas_limite['nombre'],
-            'apeUsuario'=> $usuarios_supera_horas_limite['apellido'],
+            'Usuario'=> $usuarios_supera_horas_limite['id'],
             'eliminado' => 0
         );
         try {
@@ -83,7 +75,7 @@ class NotificacionController extends Controller
         $data = array(
             'horas_sin_salir' => $request['horas_sin_salir'],
             'idUsuario'=> $request['idUsuario'],
-            'nomusuario'=> $request['nomusuario'],
+            'nomUsuario'=> $request['nomUsuario'],
             'apeUsuario'=> $request['apeUsuario'],
             'eliminado' => 0
         );

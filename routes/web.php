@@ -389,6 +389,9 @@ $router->get('/ws/liveview/consultarporpuerta/{id}', ['uses' => 'PuertaControlle
 $router->get('/ws/log/listar', ['uses' => 'LogController@listar']);
 $router->get('/ws/log/not', ['uses' => 'LogController@not']);
 $router->post('/ws/log/insertar', ['uses' => 'LogController@insertar']);
+
+//notificacion
+$router->get('/ws/notificacion/listar', ['uses' => 'NotificacionController@listar']);
 $router->post('/ws/notificacion/insertar', ['uses' => 'NotificacionController@insertar']);
 
 //camara
