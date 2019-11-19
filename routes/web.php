@@ -396,3 +396,6 @@ $router->post('/ws/notificacion/insertar', ['uses' => 'NotificacionController@in
 
 //camara
 $router->get('/ws/camara/consultar/{id}', ['uses' => 'CamaraController@consultar']);
+
+//Rutas Integración Kactus
+$router->get('/ws/integracionkactus', ['uses' => 'ExampleController@integracionKactus']);
