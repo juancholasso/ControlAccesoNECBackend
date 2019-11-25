@@ -42,6 +42,7 @@ class PermisoController extends Controller
         }
     }
 
+    
     public function listarUltimoIngreso()
     {   
         $result = DB::select('SELECT MAX(per.fecha_inicial)as fecha_ingreso,per.fecha_final,usu.documento,usu.nombre,usu.apellido,usu.id as idUsuario,per.id as 					idPermiso,per.entrada,per.eliminado
