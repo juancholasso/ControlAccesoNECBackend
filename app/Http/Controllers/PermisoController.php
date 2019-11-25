@@ -44,16 +44,14 @@ class PermisoController extends Controller
 
     public function listarUltimoIngreso()
     {   
-        $result = DB::select('SELECT MAX(fecha_inicial),permisos.fecha_final,permisos.id as idPermiso,usuario as idUsuario, 
-        usuarios.documento,usuarios.nombre,
-        usuarios.apellido, permisos.entrada,permisos.eliminado
-        FROM permisos
-        JOIN usuarios
-        ON permisos.usuario = usuarios.id
-        WHERE permisos.entrada = 1
-        AND permisos.eliminado = 0
-        GROUP BY usuario  
-        ORDER BY `MAX(fecha_inicial)` DESC');
+        $result = DB::select('SELECT MAX(per.fecha_inicial)as fecha_ingreso,per.fecha_final,usu.documento,usu.nombre,usu.apellido,usu.id as idUsuario,per.id as 					idPermiso,per.entrada,per.eliminado
+        FROM permisos as per
+        JOIN usuarios as usu
+        ON per.usuario = usu.id
+        WHERE per.entrada = 1
+        AND per.eliminado = 0
+        GROUP BY per.usuario
+        ORDER BY MAX(per.fecha_inicial) DESC');
 
         if (!empty($result)) {
             return response() -> json(
