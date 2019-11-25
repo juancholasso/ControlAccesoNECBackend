@@ -44,6 +44,7 @@ $router->put('/ws/tipodocumento/actualizar', ['uses' => 'TipoDocumentoController
 // Permisos
 $router->get('/ws/permiso/sticker/{id}', ['uses' => 'PermisoController@sticker']);
 $router->get('/ws/permiso/listar', ['uses' => 'PermisoController@listar']);
+$router->get('/ws/permiso/listarultimoingreso', ['uses' => 'PermisoController@listarUltimoIngreso']);
 $router->get('/ws/permiso/listarxusuario/{id}', ['uses' => 'PermisoController@listarPorUsuario']);
 $router->get('/ws/permiso/consultar/{id}', ['uses' => 'PermisoController@consultar']);
 $router->post('/ws/permiso/insertar', ['uses' => 'PermisoController@insertar']);

@@ -42,6 +42,32 @@ class PermisoController extends Controller
         }
     }
 
+    public function listarUltimoIngreso()
+    {   
+        $result = DB::select('SELECT MAX(fecha_inicial),permisos.fecha_final,permisos.id as idPermiso,usuario as idUsuario, 
+        usuarios.documento,usuarios.nombre,
+        usuarios.apellido, permisos.entrada,permisos.eliminado
+        FROM permisos
+        JOIN usuarios
+        ON permisos.usuario = usuarios.id
+        WHERE permisos.entrada = 1
+        AND permisos.eliminado = 0
+        GROUP BY usuario  
+        ORDER BY `MAX(fecha_inicial)` DESC');
+
+        if (!empty($result)) {
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.3.message')),
+                config('constants.messages.3.code')
+            );
+        }else{
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.4.message')),
+                config('constants.messages.4.code')
+            );
+        }
+    }
+
     /**
      *  Listar todos los permisos de los usuarios
      */
