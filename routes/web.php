@@ -52,7 +52,7 @@ $router->delete('/ws/permiso/eliminar/{id}', ['uses' => 'PermisoController@elimi
 $router->get('/ws/permiso/exportarpermiso/{id}/{fecha_inicial}/{fecha_final}', ['uses' => 'PermisoController@exportarPermiso']);
 $router->post('/ws/permiso/insertarxsubsitio', ['uses' => 'PermisoController@insertarPermisoxSubsitio']);
 $router->post('/ws/permiso/editarxsubsitio', ['uses' => 'PermisoController@editarPermisoxSubsitio']);
-
+$router->delete('/ws/permiso/estadoentrada/{id}', ['uses' => 'PermisoController@estadoEntrada']);
 
 
 

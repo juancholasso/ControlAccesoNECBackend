@@ -368,6 +368,26 @@ class IngresoController extends Controller
         }
     }
 
+
+    public function estadoIngreso($id)
+    {
+        $data = array(
+            'entrada' => 0,
+        );
+        try {
+            Ingreso::findOrFail($id) -> update($data);
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.7.message')),
+                config('constants.messages.7.code')
+            );
+        } catch (ModelNotFoundException $e) {
+            return response() -> json(
+                array('data' => [], 'message' => config('constants.messages.2.message')),
+                config('constants.messages.2.code')
+            );
+        }
+    }
+
     /**
      *  Mostrar cantidad de empleados, visitantes y contratistas ingresados al dia
      */
