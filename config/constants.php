@@ -64,5 +64,13 @@ return [
             'code' => 400,
             'message' => "Numero de documento ya existe."
         ],
+    ],
+    'kactus'=>[
+        'user'=>'SEGOVIA',
+        'pass'=>'S3g0v14',
+        'urlAuth'=>'http://kactus1.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/Autenticacion',
+        'urlAuthPort'=>'88',
+        'urlSync'=>'http://kactus1.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/InsertaMarcacion',
+        'urlSyncPort'=>'88'
     ]
 ];

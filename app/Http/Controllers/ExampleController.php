@@ -60,15 +60,15 @@ class ExampleController extends Controller
         //Autenticación - Token
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_PORT => "88",
-            CURLOPT_URL => "http://kactus1.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/Autenticacion",
+            CURLOPT_PORT => config('constants.kactus.urlAuthPort'),
+            CURLOPT_URL => config('constants.kactus.urlAuth'),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => "{\n\t\"pStUser\": \"SEGOVIA\",\n\t\"pStPass\": \"S3g0v14\"\n}",
+            CURLOPT_POSTFIELDS => "{\"pStUser\":\" ".config('constants.kactus.user')." \", \"pStPass\": \"".config('constants.kactus.pass')."\"}",
             CURLOPT_HTTPHEADER => array(
                 "Accept: */*",
                 "Accept-Encoding: gzip, deflate",
@@ -86,12 +86,14 @@ class ExampleController extends Controller
         } 
         else {
             $token = json_decode($responseAuth);
+            print_r($responseAuth);
+            exit();
 
             //Envio de datos
             $curl = curl_init();
             curl_setopt_array($curl, array(
-                CURLOPT_PORT => "88",
-                CURLOPT_URL => "http://kactus1.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/InsertaMarcacion",
+                CURLOPT_PORT => config('constants.kactus.urlSync'),
+                CURLOPT_URL => config('constants.kactus.urlSyncPort'),
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
