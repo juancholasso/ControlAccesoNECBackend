@@ -56,6 +56,10 @@ $router->post('/ws/permiso/editarxsubsitio', ['uses' => 'PermisoController@edita
 $router->delete('/ws/permiso/estadoentrada/{id}', ['uses' => 'PermisoController@estadoEntrada']);
 
 
+$router->delete('/ws/ingreso/eliminar/salida/{id}', ['uses' => 'IngresoController@estadoIngreso']);
+
+
+
 
 
 //Tipos de permiso

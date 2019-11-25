@@ -372,10 +372,12 @@ class IngresoController extends Controller
     public function estadoIngreso($id)
     {
         $data = array(
-            'entrada' => 0,
+            'eliminado' => 1,
         );
         try {
-            Ingreso::findOrFail($id) -> update($data);
+            Ingreso::where('usuario',$id)
+            ->where('salida',null)
+            ->update($data);
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.7.message')),
                 config('constants.messages.7.code')
