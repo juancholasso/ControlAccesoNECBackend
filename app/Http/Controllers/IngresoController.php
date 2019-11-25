@@ -481,8 +481,8 @@ class IngresoController extends Controller
 
     public function filtrarxFechas($fecha_inicial, $fecha_final)
     {
-        $fecha_inicial = $fecha_inicial . " 00:00:00";
-         $fecha_final = $fecha_final . " 23:59:59";
+        $fecha_inicial = $fecha_inicial . "";
+         $fecha_final = $fecha_final . "";
          $result = Ingreso::select('ingresos.id AS id', 'ingresos.ingreso AS ingreso', 
          'ingresos.salida AS salida', 'puertas.descripcion AS puerta', 'usuarios.nombre AS usuario', 'usuarios.documento as documento',
          'usuarios.nombre AS usuario', 'usuarios.documento as documento', 
