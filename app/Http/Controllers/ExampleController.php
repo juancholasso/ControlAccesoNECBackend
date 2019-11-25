@@ -29,7 +29,7 @@ class ExampleController extends Controller
 
             $entrada = [
                 'pSmCodEmpr' => '689',
-                'pFlCodEmpl' => $ingreso->usuario,
+                'pFlCodEmpl' => $ingreso->usuario, //Id identificación
                 'pStNroCont' => $ingreso->id,
                 'pStFecRelo' => date('d/m/Y',strtotime($ingreso->ingreso)),
                 'pStHorRelo' => date('H:i',strtotime($ingreso->ingreso)),

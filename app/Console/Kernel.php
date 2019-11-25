@@ -10,6 +10,7 @@ use App\Models\Notificacion;
 use App\Http\Controllers\NeoFaceController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\ExampleController;
 use Illuminate\Support\Facades\DB;
 use ElephantIO\Client;
 use ElephantIO\Engine\SocketIO\Version2X;
@@ -38,9 +39,10 @@ class Kernel extends ConsoleKernel
         //Tarea que enviar una alerta con las persosas que llevan mas de 8 horas sin salir
         $schedule->call(function () {
             // JOIN entre ingresos, puertas y usuarios
-            $ingresos_puertas_usuarios_sin_salida = DB::table('ingresos') 
+            $ingresos_puertas_usuarios_sin_salida = DB::table('ingresos')
             ->join('puertas', 'ingresos.puerta', '=', 'puertas.id')
             ->join('usuarios', 'ingresos.usuario', '=', 'usuarios.id')
+            ->where("ingresos.eliminado","=",0) 
             ->whereNull('salida')
             ->select('*')
             ->get();
@@ -133,6 +135,15 @@ class Kernel extends ConsoleKernel
              $client->emit('campanita',["data"=>$Notificacion->listar()]);
              $client->close();
         })->everyMinute();
+
+
+        $schedule->call(function () {
+            $actualizacion = new ExampleController;
+            
+             // Emitir al socket
+            $actualizacion->integracionKactus();
+
+        })->hourly();
     }
    
 }
