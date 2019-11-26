@@ -38,6 +38,7 @@ class Kernel extends ConsoleKernel
 
         //Tarea que enviar una alerta con las persosas que llevan mas de 8 horas sin salir
         $schedule->call(function () {
+            date_default_timezone_set('America/Bogota');
             // JOIN entre ingresos, puertas y usuarios
             $ingresos_puertas_usuarios_sin_salida = DB::table('ingresos')
             ->join('puertas', 'ingresos.puerta', '=', 'puertas.id')
