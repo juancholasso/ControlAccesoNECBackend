@@ -41,6 +41,7 @@ class PersonaEventoController extends Controller
         ON usu.tipo_documento = td.id
         LEFT JOIN tipos_usuarios AS tu
         ON usu.tipo_usuario = tu.id
+       
         
         WHERE ing.eliminado = 0
         
@@ -67,7 +68,17 @@ class PersonaEventoController extends Controller
                 );
  
         }
-        
+
+        for($i = 0; $i<count($infoUsuario); $i++){
+            for($j = 0; $j<count($infoUsuario); $j++){
+                if($infoUsuario[$i]['dias_sin_asistir'] > $infoUsuario[$j]['dias_sin_asistir']){
+                    $temp = $infoUsuario[$i];
+                    $infoUsuario[$i] = $infoUsuario[$j];
+                    $infoUsuario[$j] = $temp;
+                }
+            }
+        }
+
         return response() -> json(
             array('data' => $infoUsuario, 'message' => config('constants.messages.3.message')),
             config('constants.messages.3.code')
