@@ -48,6 +48,8 @@ class Kernel extends ConsoleKernel
             ->select('*')
             ->get();
 
+            DB::table('notificacion')->update(['eliminado' => 1]);
+
             $usuarios_supera_horas_limite = array();
 
             foreach($ingresos_puertas_usuarios_sin_salida as $usuario){
@@ -71,7 +73,13 @@ class Kernel extends ConsoleKernel
                         'Usuario'=> $usuario_temp['id'],
                         'eliminado' => 0
                     );
-                    $Notificacion = Notificacion::insert($data);
+                    $notificacion = Notificacion::where('usuario', $usuario_temp['id']);
+                    if(!$notificacion->exists()){
+                        Notificacion::insert($data);
+                    }
+                    else{
+                        $notificacion ->first() -> update($data);
+                    }
 
                 }
             }

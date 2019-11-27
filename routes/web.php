@@ -78,6 +78,7 @@ $router->delete('/ws/tipoequipo/eliminar/{id}', ['uses' => 'TipoEquipoController
 
 //Ingresos
 $router->get('/ws/ingreso/listar', ['uses' => 'IngresoController@listar']);
+$router->get('/ws/ingreso/listartodo', ['uses' => 'IngresoController@listarTodo']);
 $router->post('/ws/ingreso/insertar', ['uses' => 'IngresoController@insertar']);
 $router->post('/ws/ingreso/ingresar', ['uses' => 'IngresoController@ingresar']);
 $router->put('/ws/ingreso/actualizar', ['uses' => 'IngresoController@actualizar']);

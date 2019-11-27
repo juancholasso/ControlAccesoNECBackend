@@ -25,9 +25,43 @@ class IngresoController extends Controller
     public function __construct() { }
 
     /**
-     *  Listar todos los ingresos del sistema
+     *  Listar todos los ingresos del sistema despues de la fecha inicial
      */
     public function listar()
+    {   
+        date_default_timezone_set('America/Bogota');
+        $fecha_actual = date('Y-m-d 23:59:59');
+
+        $fecha_inicial = date('Y-m-d 00:00:00');
+        $fecha_final = date('Y-m-d 23:59:59');
+       
+ 
+
+        $result = Ingreso::with('usuario')
+                            ->with('usuario.area')
+                            ->with('usuario.tipo_documento')
+                            ->with('usuario.tipo_usuario')
+                            ->with('usuario.grupo')
+                            ->where('ingreso', '>=', $fecha_inicial)
+                            ->get();
+        if (!empty($result)) {
+                return response() -> json(
+                    array('data' => $result, 'message' => config('constants.messages.3.message')),
+                    config('constants.messages.3.code')
+                );
+        }else{
+            return response() -> json(
+                array('data' => $result, 'message' => config('constants.messages.4.message')),
+                config('constants.messages.4.code')
+            );
+        }
+    }
+
+
+    /**
+     *  Listar todos los ingresos del sistema
+     */
+    public function listarTodo()
     {   
         $result = Ingreso::with('usuario')
                             ->with('usuario.area')
@@ -36,10 +70,10 @@ class IngresoController extends Controller
                             ->with('usuario.grupo')
                             ->get();
         if (!empty($result)) {
-            return response() -> json(
-                array('data' => $result, 'message' => config('constants.messages.3.message')),
-                config('constants.messages.3.code')
-            );
+                return response() -> json(
+                    array('data' => $result, 'message' => config('constants.messages.3.message')),
+                    config('constants.messages.3.code')
+                );
         }else{
             return response() -> json(
                 array('data' => $result, 'message' => config('constants.messages.4.message')),
