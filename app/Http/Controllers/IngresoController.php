@@ -320,7 +320,7 @@ class IngresoController extends Controller
         }
 
         if(!$ingresoPermitido){
-            $this->emitir($usuario, false, $puerta, "Salida No Permitida", "");
+            $this->emitir($usuario, false, $puerta, "Salida No Permitida", "",$puertaid);
             return response() -> json(
                 array('data' => [], 'message' => config('constants.messages.8.message')),
                 config('constants.messages.8.code')
@@ -352,7 +352,7 @@ class IngresoController extends Controller
                 if($res > 0)
                 {
 
-                    $this->emitir($usuario, true, $puerta, "Salida", $ingreso->fotousuario);
+                    $this->emitir($usuario, true, $puerta, "Salida", $ingreso->fotousuario,$puertaid);
                     return response() -> json(
                         array('data' => [], 'message' => config('constants.messages.6.message')),
                         config('constants.messages.6.code')
