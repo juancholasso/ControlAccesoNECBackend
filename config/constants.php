@@ -66,11 +66,11 @@ return [
         ],
     ],
     'kactus'=>[
-        'user'=>'SEGOVIA',
-        'pass'=>'S3g0v14',
-        'urlAuth'=>'http://kactus1.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/Autenticacion',
-        'urlAuthPort'=>'88',
-        'urlSync'=>'http://kactus1.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/InsertaMarcacion',
-        'urlSyncPort'=>'88'
+        'user'=>"SEGOVIA",
+        'pass'=>"S3g0v14",
+        'urlAuth'=>"https://kactus.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/Autenticacion",
+        'urlAuthPort'=>"88",
+        'urlSync'=>"https://kactus.digitalwaresaas.com.co:88/KWsIctie/KWsIctie.svc/InsertaMarcacion",
+        'urlSyncPort'=>"88"
     ]
 ];

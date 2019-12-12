@@ -8,6 +8,7 @@ use App\Models\Permiso;
 use App\Models\Usuario;
 use App\Http\Controllers\NeoFaceController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\ExampleController;
 use Illuminate\Support\Facades\DB;
 use ElephantIO\Client;
 use ElephantIO\Engine\SocketIO\Version2X;
@@ -123,6 +124,12 @@ class Kernel extends ConsoleKernel
              $client->emit('campanita',["data"=>$log->not()]);
              $client->close();
         })->everyMinute();
+
+        $schedule->call(function () {
+            $exampleController = new ExampleController;
+            $exampleController->integracionKactus();
+
+        })->hourly();
     }
    
 }
