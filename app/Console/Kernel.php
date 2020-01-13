@@ -125,11 +125,11 @@ class Kernel extends ConsoleKernel
              $client->close();
         })->everyMinute();
 
-        $schedule->call(function () {
-            $exampleController = new ExampleController;
-            $exampleController->integracionKactus();
+        // $schedule->call(function () {
+        //     $exampleController = new ExampleController;
+        //     $exampleController->integracionKactus();
 
-        })->hourly();
+        // })->hourly();
     }
    
 }

@@ -54,8 +54,14 @@ class ExampleController extends Controller
             $token = json_decode($responseAuth);
 
             //Separamos cada ingreso en entrada y salida
-            $ingresos = Ingreso::with('usuario')->where('kactus','=',0)->where('eliminado','0')->get();
+            $ingresos = Ingreso::with('usuario')
+            ->where('kactus','=',0)
+            ->where('eliminado','0')
+            ->where('salida','!=', null)
+            ->where('puerta_salida','!=', "")
+            ->get();
             $resultadoSincronizacion = array();
+
             foreach($ingresos as $ingreso){
                 $puertaEntrada = Puerta::find($ingreso->puerta);
                 $puertaSalida = Puerta::find($ingreso->puerta_salida);
@@ -122,32 +128,39 @@ class ExampleController extends Controller
                 }
                 else{
                     $responseMarcacion = json_decode($responseMarcacion);
-                    if($responseMarcacion[0]->pInCodigo == 0 &&  $responseMarcacion[1]->pInCodigo == 0){
-                        $ingreso->kactus = 1;
-                        $ingreso->save();
-                        $arrayResMarcacion = array();
-                        $arrayResMarcacion['idingreso'] = $ingreso->id;
-                        $arrayResMarcacion['estadoSync'] = 1;
-                        $arrayResMarcacion['resultado'] = $responseMarcacion;
-                        array_push($resultadoSincronizacion, $arrayResMarcacion);
-                    }
-                    else if($responseMarcacion[0]->pInCodigo == 4 &&  $responseMarcacion[1]->pInCodigo == 4){
-                        $ingreso->kactus = 1;
-                        $ingreso->save();
-                        $arrayResMarcacion = array();
-                        $arrayResMarcacion['idingreso'] = $ingreso->id;
-                        $arrayResMarcacion['estadoSync'] = 1;
-                        $arrayResMarcacion['resultado'] = $responseMarcacion;
-                        array_push($resultadoSincronizacion, $arrayResMarcacion);
-                    }
-                    else{
-                        $arrayResMarcacion = array();
-                        $arrayResMarcacion['idingreso'] = $ingreso->id;
-                        $arrayResMarcacion['estadoSync'] = 0;
-                        $arrayResMarcacion['resultado'] = $responseMarcacion;
-                        array_push($resultadoSincronizacion, $arrayResMarcacion);
+                    if(isset($responseMarcacion[0]) && isset($responseMarcacion[1])){
+                        if($responseMarcacion[0]->pInCodigo == 0 &&  $responseMarcacion[1]->pInCodigo == 0){
+                            $ingreso->kactus = 1;
+                            $ingreso->save();
+                            $arrayResMarcacion = array();
+                            $arrayResMarcacion['idingreso'] = $ingreso->id;
+                            $arrayResMarcacion['estadoSync'] = 1;
+                            $arrayResMarcacion['resultado'] = $responseMarcacion;
+                            array_push($resultadoSincronizacion, $arrayResMarcacion);
+                        }
+                        else if($responseMarcacion[0]->pInCodigo == 4 &&  $responseMarcacion[1]->pInCodigo == 4){
+                            $ingreso->kactus = 1;
+                            $ingreso->save();
+                            $arrayResMarcacion = array();
+                            $arrayResMarcacion['idingreso'] = $ingreso->id;
+                            $arrayResMarcacion['estadoSync'] = 1;
+                            $arrayResMarcacion['resultado'] = $responseMarcacion;
+                            array_push($resultadoSincronizacion, $arrayResMarcacion);
+                        }
+                        else{
+                            $ingreso->kactus = 2;
+                            $ingreso->save();
+                            $arrayResMarcacion = array();
+                            $arrayResMarcacion['idingreso'] = $ingreso->id;
+                            $arrayResMarcacion['estadoSync'] = 0;
+                            $arrayResMarcacion['resultado'] = $responseMarcacion;
+                            array_push($resultadoSincronizacion, $arrayResMarcacion);
+                        }
                     }
                 }
+                $arraySerializado = serialize($resultadoSincronizacion);
+                $hash = md5($arraySerializado);
+                
             }
 
             $arraySerializado = serialize($resultadoSincronizacion);
